@@ -1,0 +1,8 @@
+# バイナリのExcelファイルをGit管理しない
+*.xlsm
+*.xlsb
+*.xltm
+*.xlam
+
+# VBAのキャッシュファイルを除外
+*.frx
