@@ -11,19 +11,21 @@ Sub ExportVBAModules()
         MkDir exportPath
     End If
     
-    ' 各モジュールをエクスポート
+    ' 各モジュールをエクスポート（VBAProjectManagerを除外）
     For Each vbComp In ThisWorkbook.VBProject.VBComponents
-        Select Case vbComp.Type
-            Case 1 ' 標準モジュール
-                vbComp.Export exportPath & vbComp.Name & ".bas"
-            Case 2 ' クラスモジュール
-                vbComp.Export exportPath & vbComp.Name & ".cls"
-            Case 3 ' ユーザーフォーム
-                vbComp.Export exportPath & vbComp.Name & ".frm"
-        End Select
+        If vbComp.Name <> "VBAProjectManager" Then
+            Select Case vbComp.Type
+                Case 1 ' 標準モジュール
+                    vbComp.Export exportPath & vbComp.Name & ".bas"
+                Case 2 ' クラスモジュール
+                    vbComp.Export exportPath & vbComp.Name & ".cls"
+                Case 3 ' ユーザーフォーム
+                    vbComp.Export exportPath & vbComp.Name & ".frm"
+            End Select
+        End If
     Next vbComp
     
-    MsgBox "VBAコードをエクスポートしました！", vbInformation
+    MsgBox "VBAコードをエクスポートしました！（VBAProjectManagerを除く）", vbInformation
 End Sub
 
 Sub ImportVBAModules()
@@ -39,17 +41,21 @@ Sub ImportVBAModules()
     Do While fileName <> ""
         moduleName = Left(fileName, InStrRev(fileName, ".") - 1)
         
-        ' 既存のモジュールを削除（エラーが発生した場合は無視）
-        On Error Resume Next
-        Set vbComp = ThisWorkbook.VBProject.VBComponents(moduleName)
-        If Not vbComp Is Nothing Then
-            ThisWorkbook.VBProject.VBComponents.Remove vbComp
-        End If
-        Err.Clear
-        On Error GoTo 0
+        ' VBAProjectManagerは削除・インポートしない
+        If moduleName <> "VBAProjectManager" Then
+            ' 既存のモジュールを削除
+            On Error Resume Next
+            Set vbComp = ThisWorkbook.VBProject.VBComponents(moduleName)
+            If Not vbComp Is Nothing Then
+                ThisWorkbook.VBProject.VBComponents.Remove vbComp
+            End If
+            Err.Clear
+            On Error GoTo 0
 
-        ' 新しいモジュールをインポート
-        ThisWorkbook.VBProject.VBComponents.Import importPath & fileName
+            ' インポート
+            ThisWorkbook.VBProject.VBComponents.Import importPath & fileName
+        End If
+
         fileName = Dir
     Loop
 
