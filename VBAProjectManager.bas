@@ -6,26 +6,26 @@ Sub ExportVBAModules()
     
     exportPath = ThisWorkbook.Path & "\src\"
     
-    ' フォルダが存在しない場合は作成
+    ' Create the folder if it does not exist
     If Dir(exportPath, vbDirectory) = "" Then
         MkDir exportPath
     End If
     
-    ' 各モジュールをエクスポート（VBAProjectManagerを除外）
+    ' Export each module (excluding VBAProjectManager)
     For Each vbComp In ThisWorkbook.VBProject.VBComponents
         If vbComp.Name <> "VBAProjectManager" Then
             Select Case vbComp.Type
-                Case 1 ' 標準モジュール
+                Case 1 ' Standard module
                     vbComp.Export exportPath & vbComp.Name & ".bas"
-                Case 2 ' クラスモジュール
+                Case 2 ' Class module
                     vbComp.Export exportPath & vbComp.Name & ".cls"
-                Case 3 ' ユーザーフォーム
+                Case 3 ' UserForm
                     vbComp.Export exportPath & vbComp.Name & ".frm"
             End Select
         End If
     Next vbComp
     
-    MsgBox "VBAコードをエクスポートしました！（VBAProjectManagerを除く）", vbInformation
+    MsgBox "VBA code has been exported! (excluding VBAProjectManager)", vbInformation
 End Sub
 
 Sub ImportVBAModules()
@@ -36,14 +36,14 @@ Sub ImportVBAModules()
     
     importPath = ThisWorkbook.Path & "\src\"
     
-    ' .bas ファイルのインポート
+    ' Import .bas files
     fileName = Dir(importPath & "*.bas")
     Do While fileName <> ""
         moduleName = Left(fileName, InStrRev(fileName, ".") - 1)
         
-        ' VBAProjectManagerは削除・インポートしない
+        ' Do not delete or import VBAProjectManager
         If moduleName <> "VBAProjectManager" Then
-            ' 既存のモジュールを削除
+            ' Delete existing module
             On Error Resume Next
             Set vbComp = ThisWorkbook.VBProject.VBComponents(moduleName)
             If Not vbComp Is Nothing Then
@@ -52,19 +52,19 @@ Sub ImportVBAModules()
             Err.Clear
             On Error GoTo 0
 
-            ' インポート
+            ' Import
             ThisWorkbook.VBProject.VBComponents.Import importPath & fileName
         End If
 
         fileName = Dir
     Loop
 
-    ' .cls ファイルのインポート
+    ' Import .cls files
     fileName = Dir(importPath & "*.cls")
     Do While fileName <> ""
         moduleName = Left(fileName, InStrRev(fileName, ".") - 1)
         
-        ' 既存のクラスモジュールを削除
+        ' Delete existing class module
         On Error Resume Next
         Set vbComp = ThisWorkbook.VBProject.VBComponents(moduleName)
         If Not vbComp Is Nothing Then
@@ -73,17 +73,17 @@ Sub ImportVBAModules()
         Err.Clear
         On Error GoTo 0
 
-        ' インポート
+        ' Import
         ThisWorkbook.VBProject.VBComponents.Import importPath & fileName
         fileName = Dir
     Loop
 
-    ' .frm ファイルのインポート（ユーザーフォーム）
+    ' Import .frm files (UserForms)
     fileName = Dir(importPath & "*.frm")
     Do While fileName <> ""
         moduleName = Left(fileName, InStrRev(fileName, ".") - 1)
         
-        ' 既存のユーザーフォームを削除
+        ' Delete existing UserForm
         On Error Resume Next
         Set vbComp = ThisWorkbook.VBProject.VBComponents(moduleName)
         If Not vbComp Is Nothing Then
@@ -92,10 +92,10 @@ Sub ImportVBAModules()
         Err.Clear
         On Error GoTo 0
 
-        ' インポート
+        ' Import
         ThisWorkbook.VBProject.VBComponents.Import importPath & fileName
         fileName = Dir
     Loop
 
-    MsgBox "VBAコードをインポートしました！", vbInformation
+    MsgBox "VBA code has been imported!", vbInformation
 End Sub
