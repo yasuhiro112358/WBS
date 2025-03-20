@@ -1,33 +1,5 @@
 Option Explicit
 
-Sub ExportVBAModules()
-    Dim vbComp As Object
-    Dim exportPath As String
-    
-    exportPath = ThisWorkbook.Path & Application.PathSeparator & "src" & Application.PathSeparator
-    
-    ' Create the folder if it does not exist
-    If Dir(exportPath, vbDirectory) = "" Then
-        MkDir exportPath
-    End If
-    
-    ' Export each module (excluding VBAProjectManager)
-    For Each vbComp In ThisWorkbook.VBProject.VBComponents
-        If vbComp.Name <> "VBAProjectManager" Then
-            Select Case vbComp.Type
-                Case 1 ' Standard module
-                    vbComp.Export exportPath & vbComp.Name & ".bas"
-                Case 2 ' Class module
-                    vbComp.Export exportPath & vbComp.Name & ".cls"
-                Case 3 ' UserForm
-                    vbComp.Export exportPath & vbComp.Name & ".frm"
-            End Select
-        End If
-    Next vbComp
-    
-    MsgBox "VBA code has been exported! (excluding VBAProjectManager)", vbInformation
-End Sub
-
 Sub ImportVBAModules()
     Dim vbComp As Object
     Dim importPath As String
@@ -37,7 +9,7 @@ Sub ImportVBAModules()
     importPath = ThisWorkbook.Path & Application.PathSeparator & "src" & Application.PathSeparator
 
     If Not IsVBProjectAccessible() Then
-        MsgBox "This VBA project is not accessible. Please enable 'Trust access to the VBA project object model' in the Developer Macro Settings.", vbCritical
+        MsgBox GetVBATrustAccessMessage(), vbCritical, "VBA Project Access Error"
         Exit Sub
     End If
 
@@ -105,6 +77,34 @@ Sub ImportVBAModules()
     MsgBox "VBA code has been imported!", vbInformation
 End Sub
 
+Sub ExportVBAModules()
+    Dim vbComp As Object
+    Dim exportPath As String
+    
+    exportPath = ThisWorkbook.Path & Application.PathSeparator & "src" & Application.PathSeparator
+    
+    ' Create the folder if it does not exist
+    If Dir(exportPath, vbDirectory) = "" Then
+        MkDir exportPath
+    End If
+    
+    ' Export each module (excluding VBAProjectManager)
+    For Each vbComp In ThisWorkbook.VBProject.VBComponents
+        If vbComp.Name <> "VBAProjectManager" Then
+            Select Case vbComp.Type
+                Case 1 ' Standard module
+                    vbComp.Export exportPath & vbComp.Name & ".bas"
+                Case 2 ' Class module
+                    vbComp.Export exportPath & vbComp.Name & ".cls"
+                Case 3 ' UserForm
+                    vbComp.Export exportPath & vbComp.Name & ".frm"
+            End Select
+        End If
+    Next vbComp
+    
+    MsgBox "VBA code has been exported! (excluding VBAProjectManager)", vbInformation
+End Sub
+
 Function IsVBProjectAccessible() As Boolean
     Dim test As Object
 
@@ -113,5 +113,18 @@ Function IsVBProjectAccessible() As Boolean
     IsVBProjectAccessible = (Err.Number = 0)
     On Error GoTo 0
 End Function
+
+Function GetVBATrustAccessMessage() As String
+    GetVBATrustAccessMessage = _
+        "This VBA project is not accessible. " & vbCrLf & _
+        "To enable access to the VBA project object model, follow these steps:" & vbCrLf & vbCrLf & _
+        "1. Open Excel and click [File] > [Options]." & vbCrLf & _
+        "2. Go to [Trust Center] and click [Trust Center Settings]." & vbCrLf & _
+        "3. Select [Macro Settings] and check " & _
+        "'Trust access to the VBA project object model'." & vbCrLf & _
+        "4. Restart Excel to apply the changes." & vbCrLf & vbCrLf & _
+        "After applying these settings, run this macro again."
+End Function
+
 
 
