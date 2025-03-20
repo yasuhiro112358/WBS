@@ -4,7 +4,7 @@ Sub ExportVBAModules()
     Dim vbComp As Object
     Dim exportPath As String
     
-    exportPath = ThisWorkbook.Path & "\src\"
+    exportPath = ThisWorkbook.Path & Application.PathSeparator & "src" & Application.PathSeparator
     
     ' Create the folder if it does not exist
     If Dir(exportPath, vbDirectory) = "" Then
@@ -34,8 +34,13 @@ Sub ImportVBAModules()
     Dim fileName As String
     Dim moduleName As String
     
-    importPath = ThisWorkbook.Path & "\src\"
-    
+    importPath = ThisWorkbook.Path & Application.PathSeparator & "src" & Application.PathSeparator
+
+    If Not IsVBProjectAccessible() Then
+        MsgBox "This VBA project is not accessible. Please enable 'Trust access to the VBA project object model' in the Developer Macro Settings.", vbCritical
+        Exit Sub
+    End If
+
     ' Import .bas files
     fileName = Dir(importPath & "*.bas")
     Do While fileName <> ""
@@ -99,3 +104,14 @@ Sub ImportVBAModules()
 
     MsgBox "VBA code has been imported!", vbInformation
 End Sub
+
+Function IsVBProjectAccessible() As Boolean
+    Dim test As Object
+
+    On Error Resume Next
+    Set test = ThisWorkbook.VBProject
+    IsVBProjectAccessible = (Err.Number = 0)
+    On Error GoTo 0
+End Function
+
+
