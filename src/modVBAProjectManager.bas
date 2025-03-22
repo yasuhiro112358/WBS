@@ -2,31 +2,51 @@ Attribute VB_Name = "modVBAProjectManager"
 Option Explicit
 
 Sub ExportVBAModules()
-    Dim vbComp As Object
+    Dim vbComp As VBComponent
     Dim exportPath As String
-    
+    Dim userResponse As VbMsgBoxResult
+
     exportPath = ThisWorkbook.Path & Application.PathSeparator & "src" & Application.PathSeparator
-    
+  
+
+    ' Confirmation message
+    userResponse = MsgBox("Export VBA code?" & vbCrLf & _
+                          "Destination: ", exportPath & _
+                          vbYesNo + vbQuestion, "Export Confirmation")
+    If userResponse = vbNo Then 
+        Exit Sub
+    End If
+  
     ' Create the folder if it does not exist
     If Dir(exportPath, vbDirectory) = "" Then
         MkDir exportPath
     End If
     
-    ' Export each module (excluding VBAProjectManager)
+    ' Export each component
     For Each vbComp In ThisWorkbook.VBProject.VBComponents
-        If vbComp.Name <> "VBAProjectManager" Then
-            Select Case vbComp.Type
-                Case 1 ' Standard module
-                    vbComp.Export exportPath & vbComp.Name & ".bas"
-                Case 2 ' Class module
-                    vbComp.Export exportPath & vbComp.Name & ".cls"
-                Case 3 ' UserForm
-                    vbComp.Export exportPath & vbComp.Name & ".frm"
-            End Select
-        End If
+        ExportModule vbComp, exportPath
     Next vbComp
     
-    MsgBox "VBA code has been exported! (excluding VBAProjectManager)", vbInformation
+    MsgBox "VBA code has been exported!", vbInformation
+End Sub
+
+' Export a module with the appropriate file extension
+Private Sub ExportModule(ByVal vbComp As VBComponent, ByVal exportPath As String)
+    Dim fileExtension As String
+    Select Case vbComp.Type
+        Case vbext_ct_StdModule
+            fileExtension = ".bas"
+        Case vbext_ct_ClassModule
+            fileExtension = ".cls"
+        Case vbext_ct_MSForm
+            fileExtension = ".frm"
+        Case vbext_ct_Document
+            fileExtension = ".cls"
+        Case Else
+            Exit Sub
+    End Select
+    
+    vbComp.Export exportPath & vbComp.Name & fileExtension
 End Sub
 
 Sub ImportVBAModules()
