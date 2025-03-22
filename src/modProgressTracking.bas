@@ -1,7 +1,7 @@
 Attribute VB_Name = "modProgressTracking"
 Sub UpdateProgress(ByVal taskId As Integer)
     Dim ws As Worksheet
-    Set ws = WBSData
+    Set ws = shtWBS
     
     'Dim taskId As Integer
     'taskId = InputBox("Enter Task ID to update progress:")

@@ -1,7 +1,7 @@
 Attribute VB_Name = "modTaskManagement"
 Sub AddTask()
     Dim ws As Worksheet
-    Set ws = WBSData
+    Set ws = shtWBS
     
     Dim lastRow As Long
     lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row + 1

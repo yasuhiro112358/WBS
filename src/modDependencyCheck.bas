@@ -1,7 +1,7 @@
 Attribute VB_Name = "modDependencyCheck"
 Function IsPredecessorCompleted(taskRow As Integer) As Boolean
     Dim ws As Worksheet
-    Set ws = WBSData
+    Set ws = shtWBS
 
     Dim predecessorRow As Integer
     predecessorRow = ws.Cells(taskRow, 15).value

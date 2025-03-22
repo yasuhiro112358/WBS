@@ -2,7 +2,7 @@ Attribute VB_Name = "modVBAProjectManager"
 Option Explicit
 
 Sub ExportVBAModules()
-    Dim vbComp As VBComponent
+    Dim vbComp As Object
     Dim exportPath As String
     Dim userResponse As VbMsgBoxResult
 
@@ -10,10 +10,13 @@ Sub ExportVBAModules()
   
 
     ' Confirmation message
-    userResponse = MsgBox("Export VBA code?" & vbCrLf & _
-                          "Destination: ", exportPath & _
-                          vbYesNo + vbQuestion, "Export Confirmation")
-    If userResponse = vbNo Then 
+    userResponse = MsgBox( _
+        "Do you want to export VBA modules?" & vbCrLf & vbCrLf & _
+        "Destination Folder:" & vbCrLf & _
+        exportPath & vbCrLf & vbCrLf & _
+        "Click [Yes] to proceed or [No] to cancel.", _
+        vbYesNo + vbQuestion, "Confirm VBA Export")
+    If userResponse = vbNo Then
         Exit Sub
     End If
   
@@ -31,16 +34,16 @@ Sub ExportVBAModules()
 End Sub
 
 ' Export a module with the appropriate file extension
-Private Sub ExportModule(ByVal vbComp As VBComponent, ByVal exportPath As String)
+Private Sub ExportModule(ByVal vbComp As Object, ByVal exportPath As String)
     Dim fileExtension As String
     Select Case vbComp.Type
-        Case vbext_ct_StdModule
+        Case 1 ' vbext_ct_StdModule
             fileExtension = ".bas"
-        Case vbext_ct_ClassModule
+        Case 2 ' vbext_ct_ClassModule
             fileExtension = ".cls"
-        Case vbext_ct_MSForm
+        Case 3 ' vbext_ct_MSForm
             fileExtension = ".frm"
-        Case vbext_ct_Document
+        Case 100 ' vbext_ct_Document
             fileExtension = ".cls"
         Case Else
             Exit Sub
@@ -146,6 +149,8 @@ Function GetVBATrustAccessMessage() As String
         "4. Restart Excel to apply the changes." & vbCrLf & vbCrLf & _
         "After applying these settings, run this macro again."
 End Function
+
+
 
 
 
