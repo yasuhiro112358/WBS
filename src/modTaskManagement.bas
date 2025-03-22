@@ -6,7 +6,8 @@ Sub AddTask()
     Dim lastRow As Long
     lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row + 1
     
-    ws.Cells(lastRow, 1).value = lastRow - 1 ' Task ID
+    'ws.Cells(lastRow, 1).value = lastRow - 1 ' Task ID
+    ws.Cells(lastRow, 1).value = GenerateUUIDv4()
     ws.Cells(lastRow, 2).value = InputBox("Enter Task Name:")
     ws.Cells(lastRow, 7).value = InputBox("Enter Baseline Start Date (yyyy/mm/dd):")
     ws.Cells(lastRow, 8).value = InputBox("Enter Baseline End Date (yyyy/mm/dd):")
