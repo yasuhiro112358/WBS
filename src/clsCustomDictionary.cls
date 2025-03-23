@@ -95,12 +95,12 @@ Public Function Keys() As Variant
 End Function
 
 ' Get all values
-Public Function Items() As Variant
+Public Function Values() As Variant
     Dim arr() As Variant
     Dim i As Integer
     
     If valueCollection.Count = 0 Then
-        Items = Array() ' Return blank array
+        Values = Array() ' Return blank array
         Exit Function
     End If
     
@@ -109,7 +109,7 @@ Public Function Items() As Variant
         arr(i) = valueCollection(i)
     Next i
     
-    Items = arr
+    Values = arr
 End Function
 
 ' Remove all data
