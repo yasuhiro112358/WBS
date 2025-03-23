@@ -77,12 +77,12 @@ Sub ImportVBAModules()
     fileName = Dir(importPath & "*")
     Do While fileName <> ""
         moduleName = Left(fileName, InStrRev(fileName, ".") - 1)
-        if Left(moduleName, 2) = "wb" or Left(moduleName, 3) = "sht" then
+        If Left(moduleName, 2) = "wb" Or Left(moduleName, 3) = "sht" Then
             ' TODO: Implement manual import logic here
-        else
-            RemoveVBCompByName moduleName 
+        Else
+            RemoveVBCompByName moduleName
             ThisWorkbook.VBProject.VBComponents.Import importPath & fileName
-        end if
+        End If
 
         fileName = Dir
     Loop
@@ -90,13 +90,18 @@ Sub ImportVBAModules()
     MsgBox "VBA code and Excel objects have been imported!", vbInformation
 End Sub
 
-Private sub RemoveVBCompByName(vbCompName as String)
+Private Sub RemoveVBCompByName(vbCompName As String)
     Dim vbComp As Object
+    
+    On Error Resume Next
     Set vbComp = ThisWorkbook.VBProject.VBComponents(vbCompName)
     If Not vbComp Is Nothing Then
         ThisWorkbook.VBProject.VBComponents.Remove vbComp
     End If
-End sub
+    
+    Err.Clear
+    On Error GoTo 0
+End Function
 
 Function IsVBProjectAccessible() As Boolean
     Dim Test As Object
@@ -118,10 +123,3 @@ Function GetVBATrustAccessMessage() As String
         "4. Restart Excel to apply the changes." & vbCrLf & vbCrLf & _
         "After applying these settings, run this macro again."
 End Function
-
-
-
-
-
-
-
