@@ -16,7 +16,7 @@ Private valueCollection As Collection
 Private Sub Class_Initialize()
     Set keyCollection = New Collection
     Set valueCollection = New Collection
-    Debug.Print "CustomDictionary is instantiated"
+    ' Debug.Print "CustomDictionary is instantiated"
 End Sub
 
 ' Add key and value
