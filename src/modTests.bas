@@ -22,14 +22,14 @@ Sub TestCustomDictionary()
     dict.Item("Task3") = "Test Code"
     
     ' Get all keys
-    keysArray = dict.Keys
+    keysArray = dict.Keys()
     Dim keyArray As Variant
     For Each keyArray In keysArray
         Debug.Print "keyArray: " & keyArray
     Next
     
     ' Get all values
-    valuesArray = dict.Items
+    valuesArray = dict.Values()
     Dim valueArray As Variant
     For Each valueArray In valuesArray
         Debug.Print "valueArray: " & valueArray
@@ -38,15 +38,6 @@ Sub TestCustomDictionary()
     Debug.Print "Check if a key exist or not"
     Debug.Print "dict.Exists('Task2'): " & dict.Exists("Task2")
     Debug.Print "dict.Exists('Unreal Task'): " & dict.Exists("Unreal Task")
-
-    ' ???????????
-    Dim key As Variant
-    'Dim keysArray As Variant
-    
-    
-    
-    keysArray = dict.Keys()
-    valuesArray = dict.Items()
 
     Dim i As Integer
     For i = LBound(keysArray) To UBound(keysArray)
