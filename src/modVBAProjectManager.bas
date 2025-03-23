@@ -8,7 +8,6 @@ Sub ExportVBAModules()
 
     exportPath = ThisWorkbook.Path & Application.PathSeparator & "src" & Application.PathSeparator
   
-
     ' Confirmation message
     userResponse = MsgBox( _
         "Do you want to export VBA modules?" & vbCrLf & vbCrLf & _
@@ -48,16 +47,14 @@ Private Sub ExportModule(ByVal vbComp As Object, ByVal exportPath As String)
         Case Else
             Exit Sub
     End Select
-    
     vbComp.Export exportPath & vbComp.Name & fileExtension
 End Sub
 
 Sub ImportVBAModules()
-    Dim vbComp As Object
     Dim importPath As String
     Dim fileName As String
     Dim moduleName As String
-    
+
     importPath = ThisWorkbook.Path & Application.PathSeparator & "src" & Application.PathSeparator
 
     If Not IsVBProjectAccessible() Then
@@ -65,69 +62,41 @@ Sub ImportVBAModules()
         Exit Sub
     End If
 
-    ' Import .bas files
-    fileName = Dir(importPath & "*.bas")
+    ' Confirmation message
+    userResponse = MsgBox( _
+        "Do you want to import VBA modules?" & vbCrLf & vbCrLf & _
+        "Source Folder:" & vbCrLf & _
+        importPath & vbCrLf & vbCrLf & _
+        "Click [Yes] to proceed or [No] to cancel.", _
+        vbYesNo + vbQuestion, "Confirm VBA Import")
+    If userResponse = vbNo Then
+        Exit Sub
+    End If
+    
+    ' Import each component
+    fileName = Dir(importPath & "*")
     Do While fileName <> ""
         moduleName = Left(fileName, InStrRev(fileName, ".") - 1)
-        
-        ' Do not delete or import VBAProjectManager
-        If moduleName <> "VBAProjectManager" Then
-            ' Delete existing module
-            On Error Resume Next
-            Set vbComp = ThisWorkbook.VBProject.VBComponents(moduleName)
-            If Not vbComp Is Nothing Then
-                ThisWorkbook.VBProject.VBComponents.Remove vbComp
-            End If
-            Err.Clear
-            On Error GoTo 0
-
-            ' Import
+        if Left(moduleName, 2) = "wb" or Left(moduleName, 3) = "sht" then
+            ' TODO: Implement manual import logic here
+        else
+            RemoveVBCompByName moduleName 
             ThisWorkbook.VBProject.VBComponents.Import importPath & fileName
-        End If
+        end if
 
         fileName = Dir
     Loop
 
-    ' Import .cls files
-    fileName = Dir(importPath & "*.cls")
-    Do While fileName <> ""
-        moduleName = Left(fileName, InStrRev(fileName, ".") - 1)
-        
-        ' Delete existing class module
-        On Error Resume Next
-        Set vbComp = ThisWorkbook.VBProject.VBComponents(moduleName)
-        If Not vbComp Is Nothing Then
-            ThisWorkbook.VBProject.VBComponents.Remove vbComp
-        End If
-        Err.Clear
-        On Error GoTo 0
-
-        ' Import
-        ThisWorkbook.VBProject.VBComponents.Import importPath & fileName
-        fileName = Dir
-    Loop
-
-    ' Import .frm files (UserForms)
-    fileName = Dir(importPath & "*.frm")
-    Do While fileName <> ""
-        moduleName = Left(fileName, InStrRev(fileName, ".") - 1)
-        
-        ' Delete existing UserForm
-        On Error Resume Next
-        Set vbComp = ThisWorkbook.VBProject.VBComponents(moduleName)
-        If Not vbComp Is Nothing Then
-            ThisWorkbook.VBProject.VBComponents.Remove vbComp
-        End If
-        Err.Clear
-        On Error GoTo 0
-
-        ' Import
-        ThisWorkbook.VBProject.VBComponents.Import importPath & fileName
-        fileName = Dir
-    Loop
-
-    MsgBox "VBA code has been imported!", vbInformation
+    MsgBox "VBA code and Excel objects have been imported!", vbInformation
 End Sub
+
+Private sub RemoveVBCompByName(vbCompName as String)
+    Dim vbComp As Object
+    Set vbComp = ThisWorkbook.VBProject.VBComponents(vbCompName)
+    If Not vbComp Is Nothing Then
+        ThisWorkbook.VBProject.VBComponents.Remove vbComp
+    End If
+End sub
 
 Function IsVBProjectAccessible() As Boolean
     Dim Test As Object
