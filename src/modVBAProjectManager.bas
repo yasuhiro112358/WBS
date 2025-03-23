@@ -123,3 +123,5 @@ Function GetVBATrustAccessMessage() As String
         "4. Restart Excel to apply the changes." & vbCrLf & vbCrLf & _
         "After applying these settings, run this macro again."
 End Function
+
+
