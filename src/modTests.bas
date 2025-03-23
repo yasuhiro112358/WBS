@@ -10,7 +10,8 @@ End Sub
 Sub TestCustomDictionary()
     Debug.Print "Start TestCustomDictionary"
     
-    Dim dict As New CustomDictionary
+    Dim dict As clsCustomDictionary
+    Set dict = CustomDictionary()
     
     Dim keysArray As Variant
     Dim valuesArray As Variant
