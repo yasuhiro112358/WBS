@@ -55,3 +55,10 @@ Sub TestCustomDictionary()
     Debug.Print "dict.Count: " & dict.Count
 End Sub
 
+Sub TextGetColDict()
+    Dim colDict As clsCustomDictionary
+    Set colDict = GetColDict()
+    
+    Debug.Print colDict.Item("Task ID")
+    Debug.Print colDict.Item("Baseline Start Date")
+End Sub
