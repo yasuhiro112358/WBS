@@ -53,7 +53,7 @@ Sub RefreshTaskById(ByVal taskId As String)
     ' Start Date
     Dim baselineStartDate As Date
     Dim actualStartDate As Date
-    Dim startDate As Date
+    Dim StartDate As Date
     
     If IsDate(sht.Cells(taskRow, colDict.Item("Baseline Start Date")).value) Then
         baselineStartDate = sht.Cells(taskRow, colDict.Item("Baseline Start Date")).value
@@ -68,16 +68,16 @@ Sub RefreshTaskById(ByVal taskId As String)
     End If
     
     If actualStartDate <> 0 Then
-        startDate = actualStartDate
+        StartDate = actualStartDate
     Else
-        startDate = baselineStartDate
+        StartDate = baselineStartDate
     End If
-    sht.Cells(taskRow, colDict.Item("Start Date")).value = startDate
+    sht.Cells(taskRow, colDict.Item("Start Date")).value = StartDate
     
     ' End Date
     Dim baselineEndDate As Date
     Dim actualEndDate As Date
-    Dim endDate As Date
+    Dim EndDate As Date
     
     If IsDate(sht.Cells(taskRow, colDict.Item("Baseline End Date")).value) Then
         baselineEndDate = sht.Cells(taskRow, colDict.Item("Baseline End Date")).value
@@ -92,11 +92,11 @@ Sub RefreshTaskById(ByVal taskId As String)
     End If
     
     If actualEndDate <> 0 Then
-        endDate = actualEndDate
+        EndDate = actualEndDate
     Else
-        endDate = baselineEndDate
+        EndDate = baselineEndDate
     End If
-    sht.Cells(taskRow, colDict.Item("End Date")).value = endDate
+    sht.Cells(taskRow, colDict.Item("End Date")).value = EndDate
 
 
 
@@ -110,7 +110,7 @@ Sub RefreshTaskById(ByVal taskId As String)
 End Sub
 
 '
-' Return 0 if `taskId` is not found
+' Return 0 if `TaskId` is not found
 '
 Function getTaskRow(taskId As String) As Integer
     Dim sht As Worksheet
