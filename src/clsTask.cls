@@ -9,69 +9,69 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 
-Private mId As String
-Private mName As String
-Private mStartDate As Date
-Private mEndDate As Date
-Private mParent As clsTask
-Private mChildren As Collection
+Private m_Id As String
+Private m_Name As String
+Private m_StartDate As Date
+Private m_EndDate As Date
+Private m_Parent As clsTask
+Private m_Children As Collection
 
 Private Sub Class_Initialize()
-    mId = ""
-    mName = ""
-    mStartDate = 0
-    mEndDate = 0
-    Set mChildren = New Collection
+    m_Id = ""
+    m_Name = ""
+    m_StartDate = 0
+    m_EndDate = 0
+    Set m_Children = New Collection
 End Sub
 
-Public Sub Initialize(ByVal pName As String, ByVal pStartDate As Date, ByVal pEndDate As Date)
-    mId = GenerateUUIDv4()
-    mName = pName
-    mStartDate = pStartDate
-    mEndDate = pEndDate
+Public Sub Initialize(ByVal p_Name As String, ByVal p_StartDate As Date, ByVal p_EndDate As Date)
+    m_Id = GenerateUUIDv4()
+    m_Name = p_Name
+    m_StartDate = p_StartDate
+    m_EndDate = p_EndDate
 End Sub
 
 Public Property Get Id() As String
-    Id = mId
+    Id = m_Id
 End Property
 
 Public Property Get Name() As String
-    Name = mName
+    Name = m_Name
 End Property
 
-Public Property Let Name(ByVal pName As String)
-    mName = pName
+Public Property Let Name(ByVal p_Name As String)
+    m_Name = p_Name
 End Property
 
 Public Property Get StartDate() As Date
-    StartDate = mStartDate
+    StartDate = m_StartDate
 End Property
 
 Public Property Get EndDate() As Date
-    EndDate = mEndDate
+    EndDate = m_EndDate
 End Property
 
 Public Property Get Parent() As clsTask
-    Set Parent = mParent
+    Set Parent = m_Parent
 End Property
 
-Public Property Set Parent(ByVal pParent As clsTask)
-    Set mParent = pParent
+Public Property Set Parent(ByVal p_Parent As clsTask)
+    Set m_Parent = p_Parent
 End Property
 
-Public Sub AddChild(ByVal pChild As clsTask)
-    mChildren.Add pChild
-    Set pChild.Parent = Me
+Public Sub AddChild(ByVal p_Child As clsTask)
+    m_Children.Add p_Child
+    Set p_Child.Parent = Me
 End Sub
 
 Public Function GetChildren() As Collection
-    Set GetChildren = mChildren
+    Set GetChildren = m_Children
 End Function
 
 Public Sub WriteToSheet(ByVal ws As Worksheet, ByVal row As Integer)
-    ws.Cells(row, TASK_ID).value = mId
-    ws.Cells(row, TASK_NAME).value = mName
-    ws.Cells(row, TASK_START_DATE).value = mStartDate
-    ws.Cells(row, TASK_END_DATE).value = mEndDate
+    ws.Cells(row, TASK_ID).value = m_Id
+    ws.Cells(row, TASK_NAME).value = m_Name
+    ws.Cells(row, TASK_START_DATE).value = m_StartDate
+    ws.Cells(row, TASK_END_DATE).value = m_EndDate
 End Sub
 
