@@ -55,10 +55,48 @@ Sub TestCustomDictionary()
     Debug.Print "dict.Count: " & dict.Count
 End Sub
 
-Sub TextGetColDict()
+Sub TestGetColDict()
     Dim colDict As clsCustomDictionary
     Set colDict = GetColDict()
     
     Debug.Print colDict.Item("Task ID")
     Debug.Print colDict.Item("Baseline Start Date")
 End Sub
+
+Sub TestTask()
+    Dim objTask As clsTask
+    Set objTask = New clsTask
+    
+    objTask.Initialize "Sample Task 1", Date, "2025-4-1"
+    
+    Debug.Print objTask.Id
+    Debug.Print objTask.Name
+    Debug.Print objTask.StartDate
+    Debug.Print objTask.EndDate
+    
+    Dim ws As Worksheet
+    Set ws = ThisWorkbook.Sheets("test")
+    objTask.WriteToSheet ws, 2
+    
+    objTask.Name = objTask.Name & " updated"
+    objTask.WriteToSheet ws, 3
+        
+     Set objTask = Nothing
+End Sub
+
+Sub TestTaskCol()
+    Debug.Print TASK_START_DATE
+    Debug.Print TASK_END_DATE
+    Debug.Print TASK_BASELINE_START_DATE
+End Sub
+
+Sub TestA1Notation()
+    Debug.Print COL_A__
+    Debug.Print COL_ID_
+    Debug.Print COL_IV_
+End Sub
+
+Sub TestGlobals()
+    Debug.Print APP_NAME
+End Sub
+
