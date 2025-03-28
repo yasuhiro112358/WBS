@@ -1,7 +1,9 @@
 Attribute VB_Name = "modUtils"
 Option Explicit
 
+'
 ' Generates a Version 4 UUID (Random UUID)
+'
 Function GenerateUUIDv4() As String
     Dim chars As String
     Dim uuid As String
