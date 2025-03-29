@@ -20,18 +20,18 @@ Private Sub Class_Initialize()
 End Sub
 
 ' Add key and value
-Public Sub Add(ByVal key As String, ByVal value As Variant)
+Public Sub Add(ByVal key As String, ByVal Value As Variant)
     Dim i As Integer
     i = GetIndex(key)
         
     If i > 0 Then
         ' Update value when the key exists
         valueCollection.Remove i
-        valueCollection.Add value, Before:=i
+        valueCollection.Add Value, Before:=i
     Else
         ' Create new value
         keyCollection.Add key
-        valueCollection.Add value
+        valueCollection.Add Value
     End If
 End Sub
 
@@ -54,8 +54,8 @@ Public Property Get Item(ByVal key As String) As Variant
 End Property
 
 ' Set value with key (update available)
-Public Property Let Item(ByVal key As String, ByVal value As Variant)
-    Add key, value
+Public Property Let Item(ByVal key As String, ByVal Value As Variant)
+    Add key, Value
 End Property
 
 ' Delete value by key
@@ -138,4 +138,5 @@ Private Function GetIndex(ByVal key As String) As Integer
     ' Not found
     GetIndex = 0
 End Function
+
 
