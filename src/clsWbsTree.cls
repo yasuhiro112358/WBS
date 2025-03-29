@@ -43,6 +43,16 @@ Public Sub AddNode(p_ParentId As String, p_objChild As clsWbsNode)
     End If
 End Sub
 
+Public Function GetParent(p_NodeId As String) As clsWbsNode
+    If m_dictParent.Exists(p_NodeId) Then
+        Dim ParentId As String
+        ParentId = m_dictParent.GetValue(p_NodeId)
+        Set GetParent = m_dictNodes.GetValue(ParentId)
+    Else
+        Set GetParent = Nothing
+    End If
+End Function
+
 '
 ' return: Collection[Objects]
 '
