@@ -28,9 +28,9 @@ Public Sub ExportToSheet(p_Sheet As Worksheet)
 
     With p_Sheet
         .Cells.ClearContents
-        .Cells(1, 1).value = "Level"
-        .Cells(1, 2).value = "Task ID"
-        .Cells(1, 3).value = "Task Name"
+        .Cells(1, 1).Value = "Level"
+        .Cells(1, 2).Value = "Task ID"
+        .Cells(1, 3).Value = "Task Name"
     End With
 
     Dim RowIndex As Long
@@ -49,9 +49,9 @@ Private Sub ExportNodeRecursive(p_objNode As clsWbsNode, ByVal p_Level As Long, 
     End If
 
     With p_Sheet
-        .Cells(p_RowIndex, 1).value = p_Level
-        .Cells(p_RowIndex, 2).value = p_objNode.Id
-        .Cells(p_RowIndex, 3).value = p_objNode.Name
+        .Cells(p_RowIndex, 1).Value = p_Level
+        .Cells(p_RowIndex, 2).Value = p_objNode.Id
+        .Cells(p_RowIndex, 3).Value = p_objNode.Name
     End With
 
     p_RowIndex = p_RowIndex + 1
