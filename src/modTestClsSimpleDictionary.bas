@@ -10,22 +10,41 @@ Sub TestClsSimpleDictionary()
     Debug.Print "=== Initial Status ==="
     Debug.Print "Count: " & objDict.Count
     
-    ' Add
+    
     objDict.Add "apple", "red"
     objDict.Add "banana", "yellow"
     objDict.Add "cherry", "pink"
     
-    Debug.Print "=== After Add ==="
+    Debug.Print "=== After adding string values ==="
     Debug.Print "Count: " & objDict.Count
     Debug.Print "apple = " & objDict.GetValue("apple")
     Debug.Print "banana = " & objDict.GetValue("banana")
+    Debug.Print "cherry = " & objDict.GetValue("cherry")
+    
+    Dim objNode As clsWbsNode
+    Set objNode = New clsWbsNode
+    ' Debug.Print "TypeName:", TypeName(objNode)
+    ' Debug.Print "objNode.Id:", objNode.Id
+    objDict.Add "Test Object", objNode
+    
+    Debug.Print "=== After adding an object ==="
+    Dim Check As Boolean
+    Check = objDict.Exists("Test Object") ' True
+    Debug.Print "objDict.Exists('Test Object'): " & Check
+    
+    Dim AddedObject As clsWbsNode
+    Set AddedObject = objDict.GetValue("Test Object")
+    Debug.Print "TypeName(AddedObject): " & TypeName(AddedObject)
     
     ' Get key or value by index
     Debug.Print "Key of Index(0): " & objDict.GetKeyByIndex(0)
     Debug.Print "Value of Index(1): " & objDict.GetValueByIndex(1)
     
-    
+    ' Make errors
+    Debug.Print "Trying 'Key of Index(-1)'"
     Debug.Print "Key of Index(-1): " & objDict.GetKeyByIndex(-1)
+    
+    Debug.Print "Trying 'Key of Index(-2)'"
     Debug.Print "Value of Index(-2): " & objDict.GetValueByIndex(-2)
       
     ' Add to update
