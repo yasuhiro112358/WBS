@@ -100,63 +100,17 @@ Sub TestGlobals()
     Debug.Print APP_NAME
 End Sub
 
-Sub TestSimpleDictionary()
-    Dim objDict As clsSimpleDictionary
-    Set objDict = New clsSimpleDictionary
+Sub TestGeneral()
+    On Error GoTo ErrorHandler
     
-    Debug.Print "=== Initial Status ==="
-    Debug.Print "Count: " & objDict.Count
+    Dim i As Long
+    i = 10 / 0
     
-    ' Add
-    objDict.Add "apple", "red"
-    objDict.Add "banana", "yellow"
-    objDict.Add "cherry", "pink"
+    Exit Sub
     
-    Debug.Print "=== After Add ==="
-    Debug.Print "Count: " & objDict.Count
-    Debug.Print "apple = " & objDict.GetValue("apple")
-    Debug.Print "banana = " & objDict.GetValue("banana")
-    
-    ' Add to update
-    objDict.Add "apple", "strong red"
-    Debug.Print "apple(updated) = " & objDict.GetValue("apple")
-    
-    ' Update with existing key
-    objDict.Update "banana", "yellow (updated)"
-    Debug.Print "banana(updated) = " & objDict.GetValue("banana")
-    
-    ' Exists
-    If objDict.Exists("cherry") Then
-        Debug.Print "cherry exists"
-    End If
-    
-    ' Remove
-    objDict.Remove "cherry"
-    Debug.Print "cherry removed"
-    Debug.Print "Count: " & objDict.Count
-    
-    ' Clear
-    objDict.Clear
-    Debug.Print "=== After Clear ==="
-    Debug.Print "Count: " & objDict.Count
+ErrorHandler:
+    Call LogError
+    Resume Next
 
-    ' Error test(GetValue)
-    On Error Resume Next
-    Dim tempVal As Variant
-    tempVal = objDict.GetValue("not_exist")
-    If Err.Number <> 0 Then
-        Debug.Print "Error(GetValue): " & Err.Description
-        Err.Clear
-    End If
-
-    ' Error test(Update)
-    objDict.Update "not_exist", "xxx"
-    If Err.Number <> 0 Then
-        Debug.Print "Error(Update): " & Err.Description
-        Err.Clear
-    End If
-    
-    Set objDict = Nothing
 End Sub
-
 
