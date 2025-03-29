@@ -1,6 +1,20 @@
 Attribute VB_Name = "modTests"
 Option Explicit
 
+Sub TestGeneralError()
+    On Error GoTo ErrorHandler
+    
+    Dim i As Long
+    i = 10 / 0
+    
+    Exit Sub
+    
+ErrorHandler:
+    Call LogError
+    Resume Next
+
+End Sub
+
 Sub TestGenerateUUIDv4()
    Dim uuid As String
    uuid = GenerateUUIDv4()
@@ -98,19 +112,5 @@ End Sub
 
 Sub TestGlobals()
     Debug.Print APP_NAME
-End Sub
-
-Sub TestGeneral()
-    On Error GoTo ErrorHandler
-    
-    Dim i As Long
-    i = 10 / 0
-    
-    Exit Sub
-    
-ErrorHandler:
-    Call LogError
-    Resume Next
-
 End Sub
 
