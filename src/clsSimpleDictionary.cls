@@ -107,3 +107,21 @@ Private Function GetKeyIndex(ByVal p_DictKey As String) As Long
     Next i
     GetKeyIndex = -1
 End Function
+
+Public Function GetKeyByIndex(ByVal p_Index As Long) As String
+    Call ValidateIndex(p_Index, "GetKeyByIndex")
+    GetKeyByIndex = m_arrEntries(p_Index).DictKey
+End Function
+
+Public Function GetValueByIndex(ByVal p_Index As Long) As Variant
+    Call ValidateIndex(p_Index, "GetValueByIndex")
+    GetValueByIndex = m_arrEntries(p_Index).DictValue
+End Function
+
+Private Sub ValidateIndex(ByVal p_Index As Long, ByVal p_Source As String)
+    If p_Index < 0 Or p_Index >= m_EntryCount Then
+'        Err.Raise vbObjectError + p_ErrorCode, , _
+'            "Index out of range in " & p_Context & ": " & p_Index
+        Call RaiseError(DictError.IndexOutOfRange, p_Source, "Index out of range")
+    End If
+End Sub
