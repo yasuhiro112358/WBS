@@ -17,7 +17,8 @@ Private m_EndDate As Date
 ' Private m_arrChildren As Collection
 
 Private Sub Class_Initialize()
-    m_Id = GenerateUUIDv4()
+    ' m_Id = GenerateUUIDv4()
+    m_Id = ""
     m_Name = ""
     m_StartDate = 0
     m_EndDate = 0
