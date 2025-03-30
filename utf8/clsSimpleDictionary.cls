@@ -22,7 +22,13 @@ Private Sub Class_Initialize()
     m_EntryCount = 0
 End Sub
 
+Public Property Get Count() As Long
+    Count = m_EntryCount
+End Property
+
 Public Sub Add(ByVal p_DictKey As String, ByVal p_DictValue As Variant)
+    On Error GoTo ErrorHandler
+
     Dim Index As Long
     Index = GetIndexByKey(p_DictKey)
     If Index <> -1 Then
@@ -43,15 +49,32 @@ Public Sub Add(ByVal p_DictKey As String, ByVal p_DictValue As Variant)
         
         m_EntryCount = m_EntryCount + 1
     End If
+    
+    Exit Sub
+    
+ErrorHandler:
+    Call HandleError("clsSimpleDictionary", "Add")
+
 End Sub
 
 Public Function Exists(ByVal p_DictKey As String) As Boolean
+    On Error GoTo ErrorHandler
+
     Exists = (GetIndexByKey(p_DictKey) <> -1)
+    
+    Exit Function
+    
+ErrorHandler:
+    Call HandleError("clsSimpleDictionary", "Exists")
+
 End Function
 
 Public Function GetValue(ByVal p_DictKey As String) As Variant
+    On Error GoTo ErrorHandler
+
     Dim Index As Long
     Index = GetIndexByKey(p_DictKey)
+    
     If Index = -1 Then
         RaiseError DictError.KeyNotFound, "GetValue", "Key not found: " & p_DictKey
         Exit Function
@@ -62,9 +85,17 @@ Public Function GetValue(ByVal p_DictKey As String) As Variant
     Else
         GetValue = m_arrEntries(Index).DictValue
     End If
+    
+    Exit Function
+    
+ErrorHandler:
+    Call HandleError("clsSimpleDictionary", "GetValue")
+
 End Function
 
 Public Sub Update(ByVal p_DictKey As String, ByVal p_DictValue As Variant)
+    On Error GoTo ErrorHandler
+
     Dim Index As Long
     Index = GetIndexByKey(p_DictKey)
     If Index = -1 Then
@@ -77,9 +108,17 @@ Public Sub Update(ByVal p_DictKey As String, ByVal p_DictValue As Variant)
     Else
         m_arrEntries(Index).DictValue = p_DictValue
     End If
+    
+    Exit Sub
+    
+ErrorHandler:
+    Call HandleError("clsSimpleDictionary", "Update")
+
 End Sub
 
 Public Sub Remove(ByVal p_DictKey As String)
+    On Error GoTo ErrorHandler
+
     Dim Index As Long
     Index = GetIndexByKey(p_DictKey)
     If Index = -1 Then
@@ -98,21 +137,33 @@ Public Sub Remove(ByVal p_DictKey As String)
     Else
         ReDim Preserve m_arrEntries(0 To m_EntryCount - 1)
     End If
+    
+    Exit Sub
+    
+ErrorHandler:
+    Call HandleError("clsSimpleDictionary", "Remove")
+
 End Sub
 
-Public Property Get Count() As Long
-    Count = m_EntryCount
-End Property
-
 Public Sub Clear()
+    On Error GoTo ErrorHandler
+
     Erase m_arrEntries
     m_EntryCount = 0
+    
+    Exit Sub
+    
+ErrorHandler:
+    Call HandleError("clsSimpleDictionary", "Clear")
+
 End Sub
 
 '
 ' return: Index number, if not found return `-1`
 '
 Private Function GetIndexByKey(ByVal p_DictKey As String) As Long
+    On Error GoTo ErrorHandler
+
     Dim i As Long
     For i = 0 To m_EntryCount - 1
         If m_arrEntries(i).DictKey = p_DictKey Then
@@ -121,20 +172,50 @@ Private Function GetIndexByKey(ByVal p_DictKey As String) As Long
         End If
     Next i
     GetIndexByKey = -1
+    
+    Exit Function
+    
+ErrorHandler:
+    Call HandleError("clsSimpleDictionary", "GetIndexByKey")
+
 End Function
 
 Public Function GetKeyByIndex(ByVal p_Index As Long) As String
+    On Error GoTo ErrorHandler
+    
     Call ValidateIndex(p_Index, "GetKeyByIndex")
     GetKeyByIndex = m_arrEntries(p_Index).DictKey
+    
+    Exit Function
+    
+ErrorHandler:
+    Call HandleError("clsSimpleDictionary", "GetKeyByIndex")
+
 End Function
 
 Public Function GetValueByIndex(ByVal p_Index As Long) As Variant
+    On Error GoTo ErrorHandler
+    
     Call ValidateIndex(p_Index, "GetValueByIndex")
     GetValueByIndex = m_arrEntries(p_Index).DictValue
+    
+    Exit Function
+    
+ErrorHandler:
+    Call HandleError("clsSimpleDictionary", "GetValueByIndex")
+
 End Function
 
 Private Sub ValidateIndex(ByVal p_Index As Long, ByVal p_Source As String)
+    On Error GoTo ErrorHandler
+
     If p_Index < 0 Or p_Index >= m_EntryCount Then
         Call RaiseError(DictError.IndexOutOfRange, p_Source, "Index out of range")
     End If
+    
+    Exit Sub
+    
+ErrorHandler:
+    Call HandleError("clsSimpleDictionary", "ValidateIndex")
+
 End Sub
