@@ -1,8 +1,6 @@
 Attribute VB_Name = "modLogger"
 Option Explicit
 
-Const ENABLE_LOG As Boolean = True
-
 Sub LogMessage(p_message As String, Optional p_Level As String = "INFO")
     If ENABLE_LOG Then
         Debug.Print "[" & Format(Now, "yyyy-mm-dd HH:MM:SS") & "] [" & p_Level & "] " & p_message
