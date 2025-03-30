@@ -18,7 +18,7 @@ Private Sub Class_Initialize()
     Set m_dictNodes = New clsSimpleDictionary
     Set m_dictParent = New clsSimpleDictionary
     
-    m_dictNodes.Add m_objRoot.Id, m_objRoot
+    ' m_dictNodes.Add m_objRoot.Id, m_objRoot
 End Sub
 
 Public Property Get Root() As clsWbsNode
@@ -30,6 +30,8 @@ Public Property Set Root(p_objRoot As clsWbsNode)
 End Property
 
 Public Sub AddNode(p_ParentId As String, p_objChild As clsWbsNode)
+    On Error GoTo ErrorHandler
+
     If p_objChild Is Nothing Then
         Exit Sub
     End If
@@ -41,22 +43,42 @@ Public Sub AddNode(p_ParentId As String, p_objChild As clsWbsNode)
     If Not m_dictParent.Exists(p_objChild.Id) Then
         m_dictParent.Add p_objChild.Id, p_ParentId
     End If
+    
+    Exit Sub
+    
+ErrorHandler:
+    Call HandleError("clsWbsTree", "AddNode")
+    
 End Sub
 
 Public Function GetParent(p_NodeId As String) As clsWbsNode
+    On Error GoTo ErrorHandler
+
     If m_dictParent.Exists(p_NodeId) Then
         Dim ParentId As String
         ParentId = m_dictParent.GetValue(p_NodeId)
-        Set GetParent = m_dictNodes.GetValue(ParentId)
+        If ParentId <> "" Then
+            Set GetParent = m_dictNodes.GetValue(ParentId)
+        Else
+            Err.Raise vbObjectError + 1000, , "Parent not found"
+        End If
     Else
-        Set GetParent = Nothing
+        Err.Raise vbObjectError + 1000, , "Parent not found"
     End If
+    
+    Exit Function
+    
+ErrorHandler:
+    Call HandleError("clsWbsTree", "GetParent")
+
 End Function
 
 '
 ' return: Collection[Objects]
 '
 Public Function GetChildren(p_ParentId As String) As Collection
+    On Error GoTo ErrorHandler
+
     Dim colChildren As Collection
     Set colChildren = New Collection
     
@@ -71,13 +93,27 @@ Public Function GetChildren(p_ParentId As String) As Collection
     Next i
 
     Set GetChildren = colChildren
+    
+    Exit Function
+    
+ErrorHandler:
+    Call HandleError("clsWbsTree", "GetChildren")
+
 End Function
 
 Public Function FindNodeById(p_Id As String) As clsWbsNode
+    On Error GoTo ErrorHandler
+
     If m_dictNodes.Exists(p_Id) Then
         Set FindNodeById = m_dictNodes.GetValue(p_Id)
     Else
         Set FindNodeById = Nothing
     End If
+    
+    Exit Function
+    
+ErrorHandler:
+    Call HandleError("clsWbsTree", "FindNodeById")
+
 End Function
 
