@@ -64,8 +64,44 @@ Private Sub SaveNodeRecursive(ByVal p_objNode As clsWbsNode, ByVal p_objTree As 
     Next objChild
 End Sub
 
-Public Function LoadFromSheet(ByVal p_Sheet As Worksheet) As clsWbsTree
-    ' ??????
-    ' ??????(Task ID / Parent ID ????????)
+Public Function LoadFromSheet(ByVal p_objSheet As Worksheet) As clsWbsTree
+    Dim objTree As New clsWbsTree
+    Dim dictNodes As New clsSimpleDictionary
+
+    Dim LastRow As Long
+    LastRow = p_objSheet.Cells(p_objSheet.Rows.Count, COL_TASK_ID).End(xlUp).Row
+
+    Dim i As Long
+    For i = HEADER_ROW + 1 To LastRow
+        Dim TaskId As String
+        Dim ParentId As String
+        Dim TaskName As String
+
+        TaskId = Trim(p_objSheet.Cells(i, COL_TASK_ID).Value)
+        TaskName = Trim(p_objSheet.Cells(i, COL_NAME).Value)
+        
+        Dim objNode As New clsWbsNode
+        objNode.Id = TaskId
+        objNode.Name = TaskName
+        
+        dictNodes.Add TaskId, objNode
+
+        ParentId = Trim(p_objSheet.Cells(i, COL_PARENT_ID).Value)
+        
+        If ParentId = "" Then
+            Set objTree.Root = objNode
+        End If
+    Next i
+
+    For i = HEADER_ROW + 1 To LastRow
+        TaskId = Trim(p_objSheet.Cells(i, COL_TASK_ID).Value)
+        ParentId = Trim(p_objSheet.Cells(i, COL_PARENT_ID).Value)
+        
+        If ParentId <> "" Then
+            objTree.AddNode ParentId, dictNodes.GetValue(TaskId)
+        End If
+    Next i
+
+    Set LoadFromSheet = objTree
 End Function
 

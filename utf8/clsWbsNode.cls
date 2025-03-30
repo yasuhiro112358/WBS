@@ -29,6 +29,10 @@ Public Property Get Id() As String
     Id = m_Id
 End Property
 
+Public Property Let Id(p_Id As String)
+    m_Id = p_Id
+End Property
+
 Public Property Get Name() As String
     Name = m_Name
 End Property

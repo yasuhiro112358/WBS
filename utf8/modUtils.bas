@@ -59,7 +59,7 @@ Sub GetColumnIndexes()
     Dim i As Integer
     For i = 1 To lastCol
         Dim colName As String
-        colName = sht.Cells(1, i).value
+        colName = sht.Cells(1, i).Value
         If colName <> "" Then
             colDict.Add colName, i
         End If
@@ -88,7 +88,7 @@ Function GetColDict() As clsCustomDictionary
     Dim i As Integer
     For i = 1 To lastCol
         Dim colName As String
-        colName = sht.Cells(1, i).value
+        colName = sht.Cells(1, i).Value
         If colName <> "" Then
             colDict.Add colName, i
         End If

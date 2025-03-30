@@ -6,8 +6,9 @@ Sub ExportVBAModules()
     Dim exportPath As String
     Dim userResponse As VbMsgBoxResult
 
-    exportPath = ThisWorkbook.Path & Application.PathSeparator & "src" & Application.PathSeparator
-  
+    ' exportPath = ThisWorkbook.Path & Application.PathSeparator & "src" & Application.PathSeparator
+    exportPath = ThisWorkbook.Path & Application.PathSeparator & "exported" & Application.PathSeparator
+    
     ' Confirmation message
     userResponse = MsgBox( _
         "Do you want to export VBA modules?" & vbCrLf & vbCrLf & _
@@ -20,9 +21,9 @@ Sub ExportVBAModules()
     End If
   
     ' Create the folder if it does not exist
-    If Dir(exportPath, vbDirectory) = "" Then
-        MkDir exportPath
-    End If
+'    If Dir(exportPath, vbDirectory) = "" Then
+'        MkDir exportPath
+'    End If
     
     ' Export each component
     For Each vbComp In ThisWorkbook.VBProject.VBComponents

@@ -14,7 +14,7 @@ Sub TestClsWbsNode()
     Debug.Print "Name: " & objRoot.Name
     Debug.Print "StartDate: " & objRoot.StartDate
     Debug.Print "EndDate: " & objRoot.EndDate
-    Debug.Print "Children Count: " & objRoot.Children.Count
+    Debug.Print "Children Count: " & objRoot.children.Count
 
     Dim objChild1 As New clsWbsNode
     ' objChild1.Id = "T-001"
@@ -32,10 +32,10 @@ Sub TestClsWbsNode()
     objRoot.AddChild objChild2
 
     Debug.Print vbCrLf & "=== After Adding Children ==="
-    Debug.Print "Children Count: " & objRoot.Children.Count
+    Debug.Print "Children Count: " & objRoot.children.Count
 
     Dim objChild As clsWbsNode
-    For Each objChild In objRoot.Children
+    For Each objChild In objRoot.children
         Debug.Print "  - Child ID: " & objChild.Id
         Debug.Print "    Name: " & objChild.Name
         Debug.Print "    StartDate: " & objChild.StartDate
@@ -48,12 +48,12 @@ Sub TestClsWbsNode()
     objRoot.AddChild objDuplicate
 
     Debug.Print vbCrLf & "=== After Attempting Duplicate Child ==="
-    Debug.Print "Children Count (should still be 2): " & objRoot.Children.Count
+    Debug.Print "Children Count (should still be 2): " & objRoot.children.Count
 
     objRoot.AddChild Nothing
 
     Debug.Print vbCrLf & "=== After Adding Nothing ==="
-    Debug.Print "Children Count (should still be 2): " & objRoot.Children.Count
+    Debug.Print "Children Count (should still be 2): " & objRoot.children.Count
 
     Dim objGrandChild As New clsWbsNode
     ' objGrandChild.Id = "T-003"
@@ -64,7 +64,7 @@ Sub TestClsWbsNode()
     Debug.Print "Grandchild ID: " & objGrandChild.Id
     Debug.Print "Grandchild Name: " & objGrandChild.Name
     Debug.Print "Parent Name: " & objGrandChild.Parent.Name
-    Debug.Print "Root's second child (" & objChild2.Name & ") has " & objChild2.Children.Count & " child(ren)"
+    Debug.Print "Root's second child (" & objChild2.Name & ") has " & objChild2.children.Count & " child(ren)"
 
 End Sub
 

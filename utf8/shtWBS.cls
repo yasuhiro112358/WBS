@@ -15,7 +15,7 @@ Private Sub Worksheet_Change(ByVal Target As Range)
         LogMessage "[Worksheet_Change] Target.Address:" & Target.Address
         
         Dim rowChanged As String
-        rowChanged = Target.row
+        rowChanged = Target.Row
         ' Debug.Print "rowChanged: " & rowChanged
                 
         Dim TaskIdChanged As String
