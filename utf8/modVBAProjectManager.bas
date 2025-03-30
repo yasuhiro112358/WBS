@@ -61,7 +61,7 @@ End Sub
 Sub ImportVBAModules()
     Dim importPath As String
     Dim fileName As String
-    Dim moduleName As String
+    Dim ModuleName As String
 
     importPath = ThisWorkbook.Path & Application.PathSeparator & "src" & Application.PathSeparator
 
@@ -84,11 +84,11 @@ Sub ImportVBAModules()
     ' Import each component
     fileName = Dir(importPath & "*")
     Do While fileName <> ""
-        moduleName = Left(fileName, InStrRev(fileName, ".") - 1)
-        If Left(moduleName, 2) = "wb" Or Left(moduleName, 3) = "sht" Then
+        ModuleName = Left(fileName, InStrRev(fileName, ".") - 1)
+        If Left(ModuleName, 2) = "wb" Or Left(ModuleName, 3) = "sht" Then
             ' TODO: Implement manual import logic here
         Else
-            RemoveVBCompByName moduleName
+            RemoveVBCompByName ModuleName
             ThisWorkbook.VBProject.VBComponents.Import importPath & fileName
         End If
 
