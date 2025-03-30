@@ -7,11 +7,13 @@ Sub TestGeneralError()
     Dim i As Long
     i = 10 / 0
     
+    Dim j As Long
+    j = "apple"
+    
     Exit Sub
     
 ErrorHandler:
-    Call LogError
-    Resume Next
+    Call HandleError("modTests", "TestGeneralError")
 
 End Sub
 
