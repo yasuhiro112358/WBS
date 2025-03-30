@@ -1,7 +1,9 @@
 Attribute VB_Name = "modUtils"
 Option Explicit
 
+'
 ' Generates a Version 4 UUID (Random UUID)
+'
 Function GenerateUUIDv4() As String
     Dim chars As String
     Dim uuid As String
@@ -42,6 +44,57 @@ Function GenerateUUIDv4() As String
     Next i
 
     GenerateUUIDv4 = uuid
+End Function
+
+Sub GetColumnIndexes()
+    Dim sht As Worksheet
+    Set sht = shtWBS
+
+    Dim colDict As clsCustomDictionary
+    Set colDict = CustomDictionary()
+    
+    Dim lastCol As Integer
+    lastCol = sht.Cells(1, sht.Columns.Count).End(xlToLeft).Column
+    
+    Dim i As Integer
+    For i = 1 To lastCol
+        Dim colName As String
+        colName = sht.Cells(1, i).value
+        If colName <> "" Then
+            colDict.Add colName, i
+        End If
+    Next i
+
+    Debug.Print "=== Column Indexes ==="
+    Dim key As Variant
+    For Each key In colDict.Keys()
+        Debug.Print key & " -> Column " & colDict.Item(key)
+    Next key
+End Sub
+
+'
+' return colDict: {key: colName, value: colNum}
+'
+Function GetColDict() As clsCustomDictionary
+    Dim sht As Worksheet
+    Set sht = shtWBS
+
+    Dim colDict As clsCustomDictionary
+    Set colDict = CustomDictionary()
+    
+    Dim lastCol As Integer
+    lastCol = sht.Cells(1, sht.Columns.Count).End(xlToLeft).Column
+    
+    Dim i As Integer
+    For i = 1 To lastCol
+        Dim colName As String
+        colName = sht.Cells(1, i).value
+        If colName <> "" Then
+            colDict.Add colName, i
+        End If
+    Next i
+
+    Set GetColDict = colDict
 End Function
 
 

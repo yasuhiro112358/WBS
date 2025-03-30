@@ -16,22 +16,22 @@ Private valueCollection As Collection
 Private Sub Class_Initialize()
     Set keyCollection = New Collection
     Set valueCollection = New Collection
-    Debug.Print "CustomDictionary is instantiated"
+    ' Debug.Print "CustomDictionary is instantiated"
 End Sub
 
 ' Add key and value
-Public Sub Add(ByVal key As String, ByVal value As Variant)
+Public Sub Add(ByVal key As String, ByVal Value As Variant)
     Dim i As Integer
     i = GetIndex(key)
         
     If i > 0 Then
         ' Update value when the key exists
         valueCollection.Remove i
-        valueCollection.Add value, Before:=i
+        valueCollection.Add Value, Before:=i
     Else
         ' Create new value
         keyCollection.Add key
-        valueCollection.Add value
+        valueCollection.Add Value
     End If
 End Sub
 
@@ -54,8 +54,8 @@ Public Property Get Item(ByVal key As String) As Variant
 End Property
 
 ' Set value with key (update available)
-Public Property Let Item(ByVal key As String, ByVal value As Variant)
-    Add key, value
+Public Property Let Item(ByVal key As String, ByVal Value As Variant)
+    Add key, Value
 End Property
 
 ' Delete value by key
@@ -95,12 +95,12 @@ Public Function Keys() As Variant
 End Function
 
 ' Get all values
-Public Function Items() As Variant
+Public Function Values() As Variant
     Dim arr() As Variant
     Dim i As Integer
     
     If valueCollection.Count = 0 Then
-        Items = Array() ' Return blank array
+        Values = Array() ' Return blank array
         Exit Function
     End If
     
@@ -109,7 +109,7 @@ Public Function Items() As Variant
         arr(i) = valueCollection(i)
     Next i
     
-    Items = arr
+    Values = arr
 End Function
 
 ' Remove all data
@@ -138,4 +138,5 @@ Private Function GetIndex(ByVal key As String) As Integer
     ' Not found
     GetIndex = 0
 End Function
+
 
