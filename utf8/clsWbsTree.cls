@@ -75,6 +75,7 @@ End Function
 
 '
 ' return: Collection[Objects]
+'         Collection having no item accepted
 '
 Public Function GetChildren(p_ParentId As String) As Collection
     On Error GoTo ErrorHandler
@@ -91,8 +92,12 @@ Public Function GetChildren(p_ParentId As String) As Collection
             colChildren.Add m_dictNodes.GetValue(ChildId)
         End If
     Next i
-
-    Set GetChildren = colChildren
+    
+    ' If colChildren.Count <> 0 Then
+        Set GetChildren = colChildren
+    ' Else
+        ' Err.Raise vbObjectError + 1000, , "Child not found"
+    ' End If
     
     Exit Function
     
