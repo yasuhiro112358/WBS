@@ -26,49 +26,49 @@ End Sub
 Sub TestCustomDictionary()
     Debug.Print "Start TestCustomDictionary"
     
-    Dim dict As clsCustomDictionary
-    Set dict = CustomDictionary()
+    Dim Dict As clsCustomDictionary
+    Set Dict = CustomDictionary()
     
     Dim keysArray As Variant
     Dim valuesArray As Variant
         
     ' Add Tasks
-    dict.Add "Task1", "Write VBA Code"
-    dict.Add "Task2", "Review Code"
-    dict.Item("Task3") = "Test Code"
+    Dict.Add "Task1", "Write VBA Code"
+    Dict.Add "Task2", "Review Code"
+    Dict.Item("Task3") = "Test Code"
     
     ' Get all keys
-    keysArray = dict.Keys()
+    keysArray = Dict.Keys()
     Dim keyArray As Variant
     For Each keyArray In keysArray
         Debug.Print "keyArray: " & keyArray
     Next
     
     ' Get all values
-    valuesArray = dict.Values()
+    valuesArray = Dict.Values()
     Dim valueArray As Variant
     For Each valueArray In valuesArray
         Debug.Print "valueArray: " & valueArray
     Next
 
     Debug.Print "Check if a key exist or not"
-    Debug.Print "dict.Exists('Task2'): " & dict.Exists("Task2")
-    Debug.Print "dict.Exists('Unreal Task'): " & dict.Exists("Unreal Task")
+    Debug.Print "dict.Exists('Task2'): " & Dict.Exists("Task2")
+    Debug.Print "dict.Exists('Unreal Task'): " & Dict.Exists("Unreal Task")
 
     Dim i As Integer
     For i = LBound(keysArray) To UBound(keysArray)
         Debug.Print keysArray(i) & " -> " & valuesArray(i)
     Next i
 
-    Debug.Print "dict.Count: " & dict.Count
+    Debug.Print "dict.Count: " & Dict.Count
 
-    dict.Remove "Task1"
+    Dict.Remove "Task1"
     
-    Debug.Print "dict.Count: " & dict.Count
+    Debug.Print "dict.Count: " & Dict.Count
 
-    dict.RemoveAll
+    Dict.RemoveAll
     
-    Debug.Print "dict.Count: " & dict.Count
+    Debug.Print "dict.Count: " & Dict.Count
 End Sub
 
 Sub TestGetColDict()
