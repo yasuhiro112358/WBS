@@ -66,10 +66,10 @@ Sub GetColumnIndexes()
     Next i
 
     Debug.Print "=== Column Indexes ==="
-    Dim key As Variant
-    For Each key In colDict.Keys()
-        Debug.Print key & " -> Column " & colDict.Item(key)
-    Next key
+    Dim Key As Variant
+    For Each Key In colDict.Keys()
+        Debug.Print Key & " -> Column " & colDict.Item(Key)
+    Next Key
 End Sub
 
 '
