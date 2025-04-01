@@ -9,14 +9,17 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 
+Private Const MODULE_NAME As String = "clsTaskRepository"
+
 Private m_objWorksheet As Worksheet
 
 Private Sub Class_Initialize()
     Set m_objWorksheet = shtTasks
 End Sub
 
-Public Function ReadAll() As Collection
+Public Function FindAll() As Collection
     On Error GoTo ErrorHandler
+    Const PROCEDURE_NAME As String = "FindAll"
 
     Dim colTasks As Collection
     Set colTasks = New Collection
@@ -51,39 +54,134 @@ Public Function ReadAll() As Collection
         colTasks.Add objTask
     Next i
 
-    Set ReadAll = colTasks
+    Set FindAll = colTasks
     
     Exit Function
-    
 ErrorHandler:
-    Call HandleError("clsTaskRepository", "ReadAll")
-
+    Err.Raise Err.Number, MODULE_NAME & "." & PROCEDURE_NAME, Err.Description
 End Function
 
 '
 ' Return Nothing if task is not found
 '
-Public Function FindById(p_Id As String) As clsTask
+Public Function Find(p_Id As String) As clsTask
     On Error GoTo ErrorHandler
+    Const PROCEDURE_NAME As String = "Find"
 
     Dim colTasks As Collection
-    Set colTasks = Me.ReadAll()
+    Set colTasks = Me.FindAll()
 
     Dim objTask As clsTask
     For Each objTask In colTasks
         If objTask.Id = p_Id Then
-            Set FindById = objTask
+            Set Find = objTask
             Exit Function
         End If
     Next
-
-    Set FindById = Nothing
+    
+    Set Find = Nothing
     
     Exit Function
-    
 ErrorHandler:
-    Call HandleError("clsTaskRepository", "FindById")
+    Err.Raise Err.Number, MODULE_NAME & "." & PROCEDURE_NAME, Err.Description
+End Function
 
+Public Sub Save(p_Task As clsTask)
+    On Error GoTo ErrorHandler
+    Const PROCEDURE_NAME As String = "Save"
+
+    Dim LastRow As Long
+    LastRow = m_objWorksheet.Cells(m_objWorksheet.Rows.Count, 1).End(xlUp).Row
+
+    Dim i As Long
+    Dim FoundRow As Long
+    FoundRow = 0
+
+    For i = 2 To LastRow
+        If CStr(m_objWorksheet.Cells(i, 1).Value) = p_Task.Id Then
+            FoundRow = i
+            Exit For
+        End If
+    Next i
+
+    Dim TargetRow As Long
+    If FoundRow > 0 Then
+        TargetRow = FoundRow
+    Else
+        TargetRow = LastRow + 1
+    End If
+
+    With m_objWorksheet
+        .Cells(TargetRow, 1).Value = p_Task.Id
+        .Cells(TargetRow, 2).Value = p_Task.Name
+        .Cells(TargetRow, 3).Value = p_Task.StartDate
+        .Cells(TargetRow, 4).Value = p_Task.EndDate
+        .Cells(TargetRow, 5).Value = p_Task.Duration
+        .Cells(TargetRow, 6).Value = p_Task.AssignedWorkHours
+        .Cells(TargetRow, 7).Value = p_Task.Progress
+        .Cells(TargetRow, 8).Value = p_Task.ActualStartDate
+        .Cells(TargetRow, 9).Value = p_Task.ActualEndDate
+        .Cells(TargetRow, 10).Value = p_Task.ActualWorkHours
+        .Cells(TargetRow, 11).Value = p_Task.BaselineStartDate
+        .Cells(TargetRow, 12).Value = p_Task.BaselineEndDate
+        .Cells(TargetRow, 13).Value = p_Task.BaselineWorkHours
+        .Cells(TargetRow, 14).Value = p_Task.PredecessorId
+        .Cells(TargetRow, 15).Value = p_Task.ParentId
+        .Cells(TargetRow, 16).Value = p_Task.ResourceId
+    End With
+
+    Exit Sub
+ErrorHandler:
+    Err.Raise Err.Number, MODULE_NAME & "." & PROCEDURE_NAME, Err.Description
+End Sub
+
+Public Sub Delete(p_Id As String)
+    On Error GoTo ErrorHandler
+    Const PROCEDURE_NAME As String = "Delete"
+
+    Dim LastRow As Long
+    LastRow = m_objWorksheet.Cells(m_objWorksheet.Rows.Count, 1).End(xlUp).Row
+
+    Dim i As Long
+    For i = 2 To LastRow
+        If CStr(m_objWorksheet.Cells(i, 1).Value) = p_Id Then
+            m_objWorksheet.Rows(i).Delete
+            Exit Sub
+        End If
+    Next i
+
+    Err.Raise vbObjectError + 1000, MODULE_NAME & "." & PROCEDURE_NAME, "Task ID not fouind: " & p_Id
+    Exit Sub
+ErrorHandler:
+    Err.Raise Err.Number, MODULE_NAME & "." & PROCEDURE_NAME, Err.Description
+End Sub
+
+'
+' Check if the task with the given ID exists
+'
+Public Function Exists(p_Id As String) As Boolean
+    On Error GoTo ErrorHandler
+    Const PROCEDURE_NAME As String = "Exists"
+
+    Exists = Not (Me.Find(p_Id) Is Nothing)
+    Exit Function
+
+ErrorHandler:
+    Err.Raise Err.Number, MODULE_NAME & "." & PROCEDURE_NAME, Err.Description
+End Function
+
+'
+' Return the number of tasks
+'
+Public Function Count() As Long
+    On Error GoTo ErrorHandler
+    Const PROCEDURE_NAME As String = "Count"
+
+    Count = Me.FindAll().Count
+    Exit Function
+
+ErrorHandler:
+    Err.Raise Err.Number, MODULE_NAME & "." & PROCEDURE_NAME, Err.Description
 End Function
 
 '
@@ -91,6 +189,7 @@ End Function
 '
 Private Function ToDate(p_Value As Variant) As Date
     On Error GoTo ErrorHandler
+    Const PROCEDURE_NAME As String = "ToDate"
 
     If IsDate(p_Value) Then
         ToDate = CDate(p_Value)
@@ -99,9 +198,7 @@ Private Function ToDate(p_Value As Variant) As Date
     End If
     
     Exit Function
-    
 ErrorHandler:
-    Call HandleError("clsTaskRepository", "ToDate")
-
+    Err.Raise Err.Number, MODULE_NAME & "." & PROCEDURE_NAME, Err.Description
 End Function
 
