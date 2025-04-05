@@ -13,8 +13,8 @@ Private Const MODULE_NAME As String = "clsResourceRepository"
 
 Private m_objWorksheet As Worksheet
 
-Private Sub Class_Initialize()
-    Set m_objWorksheet = shtResources
+Public Sub Init(p_objWorksheet As Worksheet)
+    Set m_objWorksheet = p_objWorksheet
 End Sub
 
 Public Function FindAll() As Collection
