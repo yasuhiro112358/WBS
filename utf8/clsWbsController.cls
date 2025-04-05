@@ -38,12 +38,14 @@ Sub CreateNewTask()
     Set objTask = New clsTask
     With objTask
         .Id = m_objTaskService.GenerateNewId()
-        .Name = "設計レビュー"
-        .StartDate = #4/10/2025#
-        .EndDate = #4/11/2025#
-        .AssignedWorkHours = 8
+        .WbsCode = m_objTaskService.GenerateInitialWbsCode()
+        .Name = "New task"
+        .BaselineStartDate = Date
+        .BaselineEndDate = Date
+        .BaselineWorkHours = 8
+'        .AssignedWorkHours = 0
         .Progress = 0
-        .ParentId = "1.1"
+'        .ParentId = ""
         .ResourceId = "R003"
     End With
 
@@ -77,7 +79,7 @@ Sub UpdateProgress(p_Id As String, p_Progress As Double)
     ' 親タスクの進捗も再計算（Service）
 End Sub
 
-Public Sub RefreshWBSView()
+Public Sub RefreshWbsView()
     On Error GoTo ErrorHandler
     Const PROCEDURE_NAME As String = "RefreshWBSView"
 
