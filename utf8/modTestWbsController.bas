@@ -62,7 +62,7 @@ Sub TestRefreshWbsView()
     Set objWbsController = New clsWbsController
     Call objWbsController.Init(objTaskRepository, objTaskService, objResourceRepository, objWbsPresenter, objWbsView)
     
-    Call objWbsController.RefreshWBSView
+    Call objWbsController.RefreshWbsView
 
     MsgBox "Refreshed WBS view.", vbInformation
 
