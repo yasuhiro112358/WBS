@@ -13,8 +13,8 @@ Private Const MODULE_NAME As String = "clsTaskRepository"
 
 Private m_objWorksheet As Worksheet
 
-Private Sub Class_Initialize()
-    Set m_objWorksheet = shtTasks
+Public Sub Init(p_objWorksheet As Worksheet)
+    Set m_objWorksheet = p_objWorksheet
 End Sub
 
 Public Function FindAll() As Collection
@@ -34,21 +34,22 @@ Public Function FindAll() As Collection
 
         With objTask
             .Id = CStr(m_objWorksheet.Cells(i, 1).Value)
-            .Name = CStr(m_objWorksheet.Cells(i, 2).Value)
-            .StartDate = ToDate(m_objWorksheet.Cells(i, 3).Value)
-            .EndDate = ToDate(m_objWorksheet.Cells(i, 4).Value)
-            .Duration = CDbl(Val(m_objWorksheet.Cells(i, 5).Value))
-            .AssignedWorkHours = CDbl(Val(m_objWorksheet.Cells(i, 6).Value))
-            .Progress = CDbl(Val(m_objWorksheet.Cells(i, 7).Value))
-            .ActualStartDate = ToDate(m_objWorksheet.Cells(i, 8).Value)
-            .ActualEndDate = ToDate(m_objWorksheet.Cells(i, 9).Value)
-            .ActualWorkHours = CDbl(Val(m_objWorksheet.Cells(i, 10).Value))
-            .BaselineStartDate = ToDate(m_objWorksheet.Cells(i, 11).Value)
-            .BaselineEndDate = ToDate(m_objWorksheet.Cells(i, 12).Value)
-            .BaselineWorkHours = CDbl(Val(m_objWorksheet.Cells(i, 13).Value))
-            .PredecessorId = CStr(m_objWorksheet.Cells(i, 14).Value)
-            .ParentId = CStr(m_objWorksheet.Cells(i, 15).Value)
-            .ResourceId = CStr(m_objWorksheet.Cells(i, 16).Value)
+            .WbsCode = CStr(m_objWorksheet.Cells(i, 2).Value)
+            .Name = CStr(m_objWorksheet.Cells(i, 3).Value)
+            .StartDate = ToDate(m_objWorksheet.Cells(i, 4).Value)
+            .EndDate = ToDate(m_objWorksheet.Cells(i, 5).Value)
+            .Duration = CDbl(Val(m_objWorksheet.Cells(i, 6).Value))
+            .AssignedWorkHours = CDbl(Val(m_objWorksheet.Cells(i, 7).Value))
+            .Progress = CDbl(Val(m_objWorksheet.Cells(i, 8).Value))
+            .ActualStartDate = ToDate(m_objWorksheet.Cells(i, 9).Value)
+            .ActualEndDate = ToDate(m_objWorksheet.Cells(i, 10).Value)
+            .ActualWorkHours = CDbl(Val(m_objWorksheet.Cells(i, 11).Value))
+            .BaselineStartDate = ToDate(m_objWorksheet.Cells(i, 12).Value)
+            .BaselineEndDate = ToDate(m_objWorksheet.Cells(i, 13).Value)
+            .BaselineWorkHours = CDbl(Val(m_objWorksheet.Cells(i, 14).Value))
+            .PredecessorId = CStr(m_objWorksheet.Cells(i, 15).Value)
+            .ParentId = CStr(m_objWorksheet.Cells(i, 16).Value)
+            .ResourceId = CStr(m_objWorksheet.Cells(i, 17).Value)
         End With
 
         colTasks.Add objTask
@@ -113,21 +114,22 @@ Public Sub Save(p_Task As clsTask)
 
     With m_objWorksheet
         .Cells(TargetRow, 1).Value = p_Task.Id
-        .Cells(TargetRow, 2).Value = p_Task.Name
-        .Cells(TargetRow, 3).Value = p_Task.StartDate
-        .Cells(TargetRow, 4).Value = p_Task.EndDate
-        .Cells(TargetRow, 5).Value = p_Task.Duration
-        .Cells(TargetRow, 6).Value = p_Task.AssignedWorkHours
-        .Cells(TargetRow, 7).Value = p_Task.Progress
-        .Cells(TargetRow, 8).Value = p_Task.ActualStartDate
-        .Cells(TargetRow, 9).Value = p_Task.ActualEndDate
-        .Cells(TargetRow, 10).Value = p_Task.ActualWorkHours
-        .Cells(TargetRow, 11).Value = p_Task.BaselineStartDate
-        .Cells(TargetRow, 12).Value = p_Task.BaselineEndDate
-        .Cells(TargetRow, 13).Value = p_Task.BaselineWorkHours
-        .Cells(TargetRow, 14).Value = p_Task.PredecessorId
-        .Cells(TargetRow, 15).Value = p_Task.ParentId
-        .Cells(TargetRow, 16).Value = p_Task.ResourceId
+        .Cells(TargetRow, 2).Value = p_Task.WbsCode
+        .Cells(TargetRow, 3).Value = p_Task.Name
+        .Cells(TargetRow, 4).Value = p_Task.StartDate
+        .Cells(TargetRow, 5).Value = p_Task.EndDate
+        .Cells(TargetRow, 6).Value = p_Task.Duration
+        .Cells(TargetRow, 7).Value = p_Task.AssignedWorkHours
+        .Cells(TargetRow, 8).Value = p_Task.Progress
+        .Cells(TargetRow, 9).Value = p_Task.ActualStartDate
+        .Cells(TargetRow, 10).Value = p_Task.ActualEndDate
+        .Cells(TargetRow, 11).Value = p_Task.ActualWorkHours
+        .Cells(TargetRow, 12).Value = p_Task.BaselineStartDate
+        .Cells(TargetRow, 13).Value = p_Task.BaselineEndDate
+        .Cells(TargetRow, 14).Value = p_Task.BaselineWorkHours
+        .Cells(TargetRow, 15).Value = p_Task.PredecessorId
+        .Cells(TargetRow, 16).Value = p_Task.ParentId
+        .Cells(TargetRow, 17).Value = p_Task.ResourceId
     End With
 
     Exit Sub
