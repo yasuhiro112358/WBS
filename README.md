@@ -3,7 +3,7 @@
 ## About development
 - To code, use VBE (VB Editor) in Excel.
 - To manage the code, exporting it to `src` folder.
-- Basically not import it back to VBAProject file (.xlsm).
+- Basically not import back the code to VBAProject file (.xlsm).
 
 ## 文字コードについて
 - Excel VBAのコードは、各ロケールに応じた文字コードでエクスポートされる
