@@ -98,30 +98,51 @@ ErrorHandler:
     Err.Raise Err.Number, MODULE_NAME & "." & PROCEDURE_NAME, Err.Description
 End Sub
 
-'
-' タスクの依存関係をチェック（前提タスクが未完了か？）
-'
-Public Function HasUnfinishedPredecessors(p_Task As clsTask) As Boolean
+Public Function GetStatus(p_Task As clsTask) As String
     On Error GoTo ErrorHandler
-    Const PROCEDURE_NAME As String = "HasUnfinishedPredecessors"
+    Const PROCEDURE_NAME As String = "GetStatus"
 
-    ' TODO: 実装
+    If Me.HasUnfinishedPredecessors(p_Task) Then
+        GetStatus = "Blocked"
+    ElseIf p_Task.Progress >= 100 Or IsDate(p_Task.ActualEndDate) Then
+        GetStatus = "Done"
+    ElseIf p_Task.Progress > 0 Or IsDate(p_Task.ActualStartDate) Then
+        GetStatus = "InProgress"
+    Else
+        GetStatus = "NotStarted"
+    End If
+
     Exit Function
 
 ErrorHandler:
     Err.Raise Err.Number, MODULE_NAME & "." & PROCEDURE_NAME, Err.Description
 End Function
 
-'
-' タスクの状態を判定（例：NotStarted / InProgress / Done / Blocked）
-'
-Public Function GetStatus(p_Task As clsTask) As String
+Public Function HasUnfinishedPredecessors(p_Task As clsTask) As Boolean
     On Error GoTo ErrorHandler
-    Const PROCEDURE_NAME As String = "GetStatus"
+    Const PROCEDURE_NAME As String = "HasUnfinishedPredecessors"
 
-    ' TODO: 実装（例：依存タスクが未完了なら "Blocked" など）
+    Dim PredId As String
+    PredId = Trim(p_Task.PredecessorId)
+    
+    If PredId = "" Then
+        HasUnfinishedPredecessors = False
+        Exit Function
+    End If
+
+    Dim objPredTask As clsTask
+    Set objPredTask = m_objTaskRepository.Find(PredId)
+
+    If objPredTask Is Nothing Then
+        HasUnfinishedPredecessors = False
+    ElseIf objPredTask.Progress < 100 Then
+        HasUnfinishedPredecessors = True
+    Else
+        HasUnfinishedPredecessors = False
+    End If
+
     Exit Function
-
+    
 ErrorHandler:
     Err.Raise Err.Number, MODULE_NAME & "." & PROCEDURE_NAME, Err.Description
 End Function
