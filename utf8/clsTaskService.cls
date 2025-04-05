@@ -28,6 +28,46 @@ ErrorHandler:
     Err.Raise Err.Number, MODULE_NAME & "." & PROCEDURE_NAME, Err.Description
 End Function
 
+Public Function GenerateInitialWbsCode() As String
+    On Error GoTo ErrorHandler
+    Const PROCEDURE_NAME As String = "GenerateInitialWbsCode"
+
+    Dim colTasks As Collection
+    Set colTasks = m_objTaskRepository.FindAll()
+
+    Dim MaxCode As Long
+    MaxCode = 0
+
+    Dim objTask As clsTask
+    For Each objTask In colTasks
+        Dim Code As String
+        Code = Trim(objTask.WbsCode)
+
+'        If Code <> "" And InStr(Code, ".") = 0 Then
+'            If IsNumeric(Code) Then
+'                If CLng(Code) > MaxCode Then
+'                    MaxCode = CLng(Code)
+'                End If
+'            End If
+'        End If
+        
+        If Code = "" Then GoTo Continue
+        If InStr(Code, ".") <> 0 Then GoTo Continue
+        If IsNumeric(Code) = False Then GoTo Continue
+        If CLng(Code) > MaxCode Then
+            MaxCode = CLng(Code)
+        End If
+            
+Continue:
+    Next objTask
+
+    GenerateInitialWbsCode = CStr(MaxCode + 1)
+    Exit Function
+
+ErrorHandler:
+    Err.Raise Err.Number, MODULE_NAME & "." & PROCEDURE_NAME, Err.Description
+End Function
+
 '
 ' Return `Assigned - Actual`
 '
@@ -130,12 +170,12 @@ Public Function HasUnfinishedPredecessors(p_Task As clsTask) As Boolean
         Exit Function
     End If
 
-    Dim objPredTask As clsTask
-    Set objPredTask = m_objTaskRepository.Find(PredId)
+    Dim objpredTask As clsTask
+    Set objpredTask = m_objTaskRepository.Find(PredId)
 
-    If objPredTask Is Nothing Then
+    If objpredTask Is Nothing Then
         HasUnfinishedPredecessors = False
-    ElseIf objPredTask.Progress < 100 Then
+    ElseIf objpredTask.Progress < 100 Then
         HasUnfinishedPredecessors = True
     Else
         HasUnfinishedPredecessors = False
@@ -146,4 +186,47 @@ Public Function HasUnfinishedPredecessors(p_Task As clsTask) As Boolean
 ErrorHandler:
     Err.Raise Err.Number, MODULE_NAME & "." & PROCEDURE_NAME, Err.Description
 End Function
+
+Public Sub RecalculateParentRelations()
+    On Error GoTo ErrorHandler
+    Const PROCEDURE_NAME As String = "RecalculateParentRelations"
+
+    Dim colTasks As Collection
+    Set colTasks = m_objTaskRepository.FindAll()
+
+    Dim dictWbsCodeToTaskId As clsDictionary
+    Set dictWbsCodeToTaskId = New clsDictionary
+
+    Dim objTask As clsTask
+    For Each objTask In colTasks
+        If Len(objTask.WbsCode) > 0 Then
+            Call dictWbsCodeToTaskId.Add(objTask.WbsCode, objTask.Id)
+        End If
+    Next
+    For Each objTask In colTasks
+        Dim ParentWbsCode As String
+        ParentWbsCode = GetParentWbsCode(objTask.WbsCode)
+
+        If ParentWbsCode <> "" And dictWbsCodeToTaskId.Exists(ParentWbsCode) Then
+            objTask.ParentId = dictWbsCodeToTaskId.Item(ParentWbsCode)
+        Else
+            objTask.ParentId = ""
+        End If
+
+        Call m_objTaskRepository.Save(objTask)
+    Next
+
+    Exit Sub
+ErrorHandler:
+    Err.Raise Err.Number, MODULE_NAME & "." & PROCEDURE_NAME, Err.Description
+End Sub
+
+Private Function GetParentWbsCode(p_WbsCode As String) As String
+    If InStrRev(p_WbsCode, ".") > 0 Then
+        GetParentWbsCode = Left(p_WbsCode, InStrRev(p_WbsCode, ".") - 1)
+    Else
+        GetParentWbsCode = ""
+    End If
+End Function
+
 
