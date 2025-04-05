@@ -9,9 +9,10 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 
-Private m_Id As String
+Private m_TaskId As String
+Private m_WbsCode As String
 Private m_Name As String
-Private m_Level As String
+Private m_Level As Long
 Private m_DisplayName As String
 Private m_StartDate As Date
 Private m_EndDate As Date
@@ -26,15 +27,29 @@ Private m_RemainingWorkHours As Double
 Private m_ActualStartDate As Date
 Private m_ActualEndDate As Date
 Private m_PredecessorId As String
+Private m_PredecessorWbsCode As String
+Private m_PredecessorName As String
+Private m_ResourceId As String
 Private m_ResourceName As String
 Private m_StatusLabel As String
+Private m_TaskLineNo As Long
+Private m_ParentLineNo As Long
+Private m_PredecessorLineNo As Long
 
-Public Property Get Id() As String
-    Id = m_Id
+Public Property Get TaskId() As String
+    TaskId = m_TaskId
 End Property
 
-Public Property Let Id(p_Value As String)
-    m_Id = p_Value
+Public Property Let TaskId(p_Value As String)
+    m_TaskId = p_Value
+End Property
+
+Public Property Get WbsCode() As String
+    WbsCode = m_WbsCode
+End Property
+
+Public Property Let WbsCode(p_Value As String)
+    m_WbsCode = p_Value
 End Property
 
 Public Property Get Name() As String
@@ -165,6 +180,30 @@ Public Property Let PredecessorId(p_Value As String)
     m_PredecessorId = p_Value
 End Property
 
+Public Property Get PredecessorWbsCode() As String
+    PredecessorWbsCode = m_PredecessorWbsCode
+End Property
+
+Public Property Let PredecessorWbsCode(p_Value As String)
+    m_PredecessorWbsCode = p_Value
+End Property
+
+Public Property Get PredecessorName() As String
+    PredecessorName = m_PredecessorName
+End Property
+
+Public Property Let PredecessorName(p_Value As String)
+    m_PredecessorName = p_Value
+End Property
+
+Public Property Get ResourceId() As String
+    ResourceId = m_ResourceId
+End Property
+
+Public Property Let ResourceId(p_Value As String)
+    m_ResourceId = p_Value
+End Property
+
 Public Property Get ResourceName() As String
     ResourceName = m_ResourceName
 End Property
@@ -179,5 +218,29 @@ End Property
 
 Public Property Let StatusLabel(p_Value As String)
     m_StatusLabel = p_Value
+End Property
+
+Public Property Get TaskLineNo() As Long
+    TaskLineNo = m_TaskLineNo
+End Property
+
+Public Property Let TaskLineNo(p_Value As Long)
+    m_TaskLineNo = p_Value
+End Property
+
+Public Property Get ParentLineNo() As Long
+    ParentLineNo = m_ParentLineNo
+End Property
+
+Public Property Let ParentLineNo(p_Value As Long)
+    m_ParentLineNo = p_Value
+End Property
+
+Public Property Get PredecessorLineNo() As Long
+    PredecessorLineNo = m_PredecessorLineNo
+End Property
+
+Public Property Let PredecessorLineNo(p_Value As Long)
+    m_PredecessorLineNo = p_Value
 End Property
 
