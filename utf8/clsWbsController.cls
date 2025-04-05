@@ -57,7 +57,7 @@ Sub CreateNewTask()
     Set colResources = m_objResourceRepository.FindAll()
 
     Dim colViewItems As Collection
-    Set colViewItems = m_objWbsPresenter.BuildViewItems(colTasks, colResources)
+    Set colViewItems = m_objWbsPresenter.BuildWbsViewItems(colTasks, colResources)
 
     Call m_objWbsView.Clear
     Call m_objWbsView.Render(colViewItems)
