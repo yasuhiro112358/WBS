@@ -10,6 +10,7 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private m_Id As String
+Private m_WbsCode As String
 Private m_Name As String
 Private m_StartDate As Date
 Private m_EndDate As Date
@@ -32,6 +33,14 @@ End Property
 
 Public Property Let Id(p_Value As String)
     m_Id = p_Value
+End Property
+
+Public Property Get WbsCode() As String
+    WbsCode = m_WbsCode
+End Property
+
+Public Property Let WbsCode(p_Value As String)
+    m_WbsCode = p_Value
 End Property
 
 Public Property Get Name() As String
