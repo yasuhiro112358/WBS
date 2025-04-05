@@ -51,50 +51,50 @@ Sub RefreshTaskById(ByVal TaskId As String)
                 
     
     ' Start Date
-    Dim baselineStartDate As Date
-    Dim actualStartDate As Date
+    Dim BaselineStartDate As Date
+    Dim ActualStartDate As Date
     Dim StartDate As Date
     
     If IsDate(sht.Cells(taskRow, colDict.Item("Baseline Start Date")).Value) Then
-        baselineStartDate = sht.Cells(taskRow, colDict.Item("Baseline Start Date")).Value
+        BaselineStartDate = sht.Cells(taskRow, colDict.Item("Baseline Start Date")).Value
     Else
-        baselineStartDate = 0
+        BaselineStartDate = 0
     End If
     
     If IsDate(sht.Cells(taskRow, colDict.Item("Actual Start Date")).Value) Then
-        actualStartDate = sht.Cells(taskRow, colDict.Item("Actual Start Date")).Value
+        ActualStartDate = sht.Cells(taskRow, colDict.Item("Actual Start Date")).Value
     Else
-        actualStartDate = 0
+        ActualStartDate = 0
     End If
     
-    If actualStartDate <> 0 Then
-        StartDate = actualStartDate
+    If ActualStartDate <> 0 Then
+        StartDate = ActualStartDate
     Else
-        StartDate = baselineStartDate
+        StartDate = BaselineStartDate
     End If
     sht.Cells(taskRow, colDict.Item("Start Date")).Value = StartDate
     
     ' End Date
-    Dim baselineEndDate As Date
-    Dim actualEndDate As Date
+    Dim BaselineEndDate As Date
+    Dim ActualEndDate As Date
     Dim EndDate As Date
     
     If IsDate(sht.Cells(taskRow, colDict.Item("Baseline End Date")).Value) Then
-        baselineEndDate = sht.Cells(taskRow, colDict.Item("Baseline End Date")).Value
+        BaselineEndDate = sht.Cells(taskRow, colDict.Item("Baseline End Date")).Value
     Else
-        baselineEndDate = 0
+        BaselineEndDate = 0
     End If
     
     If IsDate(sht.Cells(taskRow, colDict.Item("Actual End Date")).Value) Then
-        actualEndDate = sht.Cells(taskRow, colDict.Item("Actual End Date")).Value
+        ActualEndDate = sht.Cells(taskRow, colDict.Item("Actual End Date")).Value
     Else
-        actualEndDate = 0
+        ActualEndDate = 0
     End If
     
-    If actualEndDate <> 0 Then
-        EndDate = actualEndDate
+    If ActualEndDate <> 0 Then
+        EndDate = ActualEndDate
     Else
-        EndDate = baselineEndDate
+        EndDate = BaselineEndDate
     End If
     sht.Cells(taskRow, colDict.Item("End Date")).Value = EndDate
 
