@@ -4,9 +4,9 @@ Function IsPredecessorCompleted(taskRow As Integer) As Boolean
     Set ws = shtWBS
 
     Dim predecessorRow As Integer
-    predecessorRow = ws.Cells(taskRow, 15).value
+    predecessorRow = ws.Cells(taskRow, 15).Value
 
-    If ws.Cells(predecessorRow, 14).value = "" Then ' Predecessor task is incomplete
+    If ws.Cells(predecessorRow, 14).Value = "" Then ' Predecessor task is incomplete
         IsPredecessorCompleted = False
     Else
         IsPredecessorCompleted = True

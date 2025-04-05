@@ -2,35 +2,43 @@ Attribute VB_Name = "modVBAProjectManager"
 Option Explicit
 
 Sub ExportVBAModules()
-    Dim vbComp As Object
-    Dim exportPath As String
-    Dim userResponse As VbMsgBoxResult
-
-    exportPath = ThisWorkbook.Path & Application.PathSeparator & "src" & Application.PathSeparator
-  
-    ' Confirmation message
-    userResponse = MsgBox( _
-        "Do you want to export VBA modules?" & vbCrLf & vbCrLf & _
-        "Destination Folder:" & vbCrLf & _
-        exportPath & vbCrLf & vbCrLf & _
-        "Click [Yes] to proceed or [No] to cancel.", _
-        vbYesNo + vbQuestion, "Confirm VBA Export")
-    If userResponse = vbNo Then
+    Dim Sep As String
+    Sep = Application.PathSeparator
+    
+    Dim ExportDir As String
+    ExportDir = ThisWorkbook.Path & Sep & "exported"
+    
+    Dim UserConfirmed As Boolean
+    UserConfirmed = ConfirmExport(ExportDir)
+    If Not UserConfirmed Then
         Exit Sub
     End If
-  
-    ' Create the folder if it does not exist
-    If Dir(exportPath, vbDirectory) = "" Then
-        MkDir exportPath
+    
+    If Dir(ExportDir, vbDirectory) = "" Then
+        MkDir ExportDir
     End If
     
-    ' Export each component
-    For Each vbComp In ThisWorkbook.VBProject.VBComponents
-        ExportModule vbComp, exportPath
-    Next vbComp
+    Dim objComponent As Object
+    For Each objComponent In ThisWorkbook.VBProject.VBComponents
+        ExportModule objComponent, ExportDir & Sep 'Need separator
+    Next objComponent
     
     MsgBox "VBA code has been exported!", vbInformation
+    Call LogMessage("VBA code has been exported.")
 End Sub
+
+Private Function ConfirmExport(p_Destination As String) As Boolean
+    Dim Response As VbMsgBoxResult
+
+    Response = MsgBox( _
+        "Do you want to export VBA modules?" & vbCrLf & vbCrLf & _
+        "Destination:" & vbCrLf & _
+        p_Destination & vbCrLf & vbCrLf & _
+        "Click [Yes] to proceed or [No] to cancel.", _
+        vbYesNo + vbQuestion, "Confirm VBA Export")
+
+    ConfirmExport = (Response = vbYes)
+End Function
 
 ' Export a module with the appropriate file extension
 Private Sub ExportModule(ByVal vbComp As Object, ByVal exportPath As String)
@@ -53,7 +61,7 @@ End Sub
 Sub ImportVBAModules()
     Dim importPath As String
     Dim fileName As String
-    Dim moduleName As String
+    Dim ModuleName As String
 
     importPath = ThisWorkbook.Path & Application.PathSeparator & "src" & Application.PathSeparator
 
@@ -63,24 +71,24 @@ Sub ImportVBAModules()
     End If
 
     ' Confirmation message
-    userResponse = MsgBox( _
+    UserResponse = MsgBox( _
         "Do you want to import VBA modules?" & vbCrLf & vbCrLf & _
         "Source Folder:" & vbCrLf & _
         importPath & vbCrLf & vbCrLf & _
         "Click [Yes] to proceed or [No] to cancel.", _
         vbYesNo + vbQuestion, "Confirm VBA Import")
-    If userResponse = vbNo Then
+    If UserResponse = vbNo Then
         Exit Sub
     End If
     
     ' Import each component
     fileName = Dir(importPath & "*")
     Do While fileName <> ""
-        moduleName = Left(fileName, InStrRev(fileName, ".") - 1)
-        If Left(moduleName, 2) = "wb" Or Left(moduleName, 3) = "sht" Then
+        ModuleName = Left(fileName, InStrRev(fileName, ".") - 1)
+        If Left(ModuleName, 2) = "wb" Or Left(ModuleName, 3) = "sht" Then
             ' TODO: Implement manual import logic here
         Else
-            RemoveVBCompByName moduleName
+            RemoveVBCompByName ModuleName
             ThisWorkbook.VBProject.VBComponents.Import importPath & fileName
         End If
 

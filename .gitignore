@@ -1,9 +1,7 @@
-# *.xlsm
-*.xlsb
-*.xltm
-*.xlam
+# Temp files
+exported/*
+*.tmp
 
 # Excel temp files
 *.frx
 ~$*
-

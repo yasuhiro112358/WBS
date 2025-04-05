@@ -20,32 +20,32 @@ Private Sub Class_Initialize()
 End Sub
 
 ' Add key and value
-Public Sub Add(ByVal key As String, ByVal value As Variant)
+Public Sub Add(ByVal Key As String, ByVal Value As Variant)
     Dim i As Integer
-    i = GetIndex(key)
+    i = GetIndex(Key)
         
     If i > 0 Then
         ' Update value when the key exists
         valueCollection.Remove i
-        valueCollection.Add value, Before:=i
+        valueCollection.Add Value, Before:=i
     Else
         ' Create new value
-        keyCollection.Add key
-        valueCollection.Add value
+        keyCollection.Add Key
+        valueCollection.Add Value
     End If
 End Sub
 
 ' Check if a key exists
-Public Function Exists(ByVal key As String) As Boolean
+Public Function Exists(ByVal Key As String) As Boolean
     'On Error Resume Next
-    Exists = (GetIndex(key) > 0)
+    Exists = (GetIndex(Key) > 0)
     'On Error GoTo 0
 End Function
 
 ' Get value by key
-Public Property Get Item(ByVal key As String) As Variant
+Public Property Get Item(ByVal Key As String) As Variant
     Dim i As Integer
-    i = GetIndex(key)
+    i = GetIndex(Key)
     If i > 0 Then
         Item = valueCollection(i)
     Else
@@ -54,18 +54,18 @@ Public Property Get Item(ByVal key As String) As Variant
 End Property
 
 ' Set value with key (update available)
-Public Property Let Item(ByVal key As String, ByVal value As Variant)
-    Add key, value
+Public Property Let Item(ByVal Key As String, ByVal Value As Variant)
+    Add Key, Value
 End Property
 
 ' Delete value by key
-Public Sub Remove(ByVal key As String)
+Public Sub Remove(ByVal Key As String)
     Dim i As Integer
-    i = GetIndex(key)
+    i = GetIndex(Key)
     If i > 0 Then
         keyCollection.Remove i
         valueCollection.Remove i
-        Debug.Print "Data having key: " & key & " is Removed"
+        Debug.Print "Data having key: " & Key & " is Removed"
     Else
         Err.Raise 9, "CustomDictionary", "Key not found"
     End If
@@ -120,7 +120,7 @@ Public Sub RemoveAll()
 End Sub
 
 ' Get index by key
-Private Function GetIndex(ByVal key As String) As Integer
+Private Function GetIndex(ByVal Key As String) As Integer
     Dim i As Integer
     
     If keyCollection.Count = 0 Then
@@ -129,7 +129,7 @@ Private Function GetIndex(ByVal key As String) As Integer
     End If
     
     For i = 1 To keyCollection.Count
-        If keyCollection(i) = key Then
+        If keyCollection(i) = Key Then
             GetIndex = i
             Exit Function
         End If
@@ -138,4 +138,5 @@ Private Function GetIndex(ByVal key As String) As Integer
     ' Not found
     GetIndex = 0
 End Function
+
 

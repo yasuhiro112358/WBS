@@ -1,7 +1,9 @@
 Attribute VB_Name = "modUtils"
 Option Explicit
 
+'
 ' Generates a Version 4 UUID (Random UUID)
+'
 Function GenerateUUIDv4() As String
     Dim chars As String
     Dim uuid As String
@@ -57,17 +59,17 @@ Sub GetColumnIndexes()
     Dim i As Integer
     For i = 1 To lastCol
         Dim colName As String
-        colName = sht.Cells(1, i).value
+        colName = sht.Cells(1, i).Value
         If colName <> "" Then
             colDict.Add colName, i
         End If
     Next i
 
     Debug.Print "=== Column Indexes ==="
-    Dim key As Variant
-    For Each key In colDict.Keys()
-        Debug.Print key & " -> Column " & colDict.Item(key)
-    Next key
+    Dim Key As Variant
+    For Each Key In colDict.Keys()
+        Debug.Print Key & " -> Column " & colDict.Item(Key)
+    Next Key
 End Sub
 
 '
@@ -86,7 +88,7 @@ Function GetColDict() As clsCustomDictionary
     Dim i As Integer
     For i = 1 To lastCol
         Dim colName As String
-        colName = sht.Cells(1, i).value
+        colName = sht.Cells(1, i).Value
         If colName <> "" Then
             colDict.Add colName, i
         End If
