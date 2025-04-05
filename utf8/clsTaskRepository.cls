@@ -152,7 +152,7 @@ Public Sub Delete(p_Id As String)
         End If
     Next i
 
-    Err.Raise vbObjectError + 1000, MODULE_NAME & "." & PROCEDURE_NAME, "Task ID not fouind: " & p_Id
+    Err.Raise vbObjectError + 1000, MODULE_NAME & "." & PROCEDURE_NAME, "Task ID not found: " & p_Id
     Exit Sub
 ErrorHandler:
     Err.Raise Err.Number, MODULE_NAME & "." & PROCEDURE_NAME, Err.Description
