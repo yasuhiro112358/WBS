@@ -11,6 +11,9 @@ Option Explicit
 
 Private Const MODULE_NAME As String = "clsWbsView"
 
+Private Const HEADER_ROW As Long = 4
+Private Const DATA_START_ROW As Long = 5
+
 Private m_objWorksheet As Worksheet
 
 Public Sub Init(p_objWorksheet As Worksheet)
@@ -22,7 +25,7 @@ Public Sub Clear()
     LastRow = m_objWorksheet.Cells(m_objWorksheet.Rows.Count, 1).End(xlUp).Row
 
     If LastRow > 1 Then
-        m_objWorksheet.Rows("2:" & LastRow).ClearContents
+        m_objWorksheet.Rows(DATA_START_ROW & ":" & LastRow).ClearContents
     End If
 End Sub
 
@@ -30,9 +33,10 @@ Public Sub Render(p_colWbsViewItems As Collection)
     On Error GoTo ErrorHandler
     Const PROCEDURE_NAME As String = "Render"
 
-    Dim i As Long
-    i = 2
+    Call DrawHeader
 
+    Dim i As Long
+    i = DATA_START_ROW
     Dim objWbsViewItem As clsWbsViewItem
     For Each objWbsViewItem In p_colWbsViewItems
         With m_objWorksheet
@@ -69,4 +73,33 @@ Private Function FormatDate(p_Date As Date) As Variant
         FormatDate = p_Date
     End If
 End Function
+
+Private Sub DrawHeader()
+    With m_objWorksheet
+        .Cells(HEADER_ROW, 1).Value = "Task ID"
+        .Cells(HEADER_ROW, 2).Value = "Task Name"
+        .Cells(HEADER_ROW, 3).Value = "Start Date"
+        .Cells(HEADER_ROW, 4).Value = "End Date"
+        .Cells(HEADER_ROW, 5).Value = "Progress [%]"
+        .Cells(HEADER_ROW, 6).Value = "Duration"
+        .Cells(HEADER_ROW, 7).Value = "Baseline Start Date"
+        .Cells(HEADER_ROW, 8).Value = "Baseline End Date"
+        .Cells(HEADER_ROW, 9).Value = "Baseline Work Hours"
+        .Cells(HEADER_ROW, 10).Value = "Assigned Work Hours"
+        .Cells(HEADER_ROW, 11).Value = "Actual Work Hours"
+        .Cells(HEADER_ROW, 12).Value = "Remaining Work Hours"
+        .Cells(HEADER_ROW, 13).Value = "Actual Start Date"
+        .Cells(HEADER_ROW, 14).Value = "Actual End Date"
+        .Cells(HEADER_ROW, 15).Value = "Predecessor Task"
+        .Cells(HEADER_ROW, 16).Value = "Resource Name"
+                
+        With .Cells(HEADER_ROW, 1).Resize(1, 16)
+            .Font.Bold = True
+            .Font.Color = RGB(255, 255, 255)
+            ' Siemens Cyan
+            .Interior.Color = RGB(0, 153, 153)
+            .HorizontalAlignment = xlCenter
+        End With
+    End With
+End Sub
 
