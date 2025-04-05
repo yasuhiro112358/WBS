@@ -36,7 +36,6 @@ Sub CreateNewTask()
 
     Dim objTask As clsTask
     Set objTask = New clsTask
-    
     With objTask
         .Id = m_objTaskService.GenerateNewId()
         .Name = "設計レビュー"
@@ -78,7 +77,25 @@ Sub UpdateProgress(p_Id As String, p_Progress As Double)
     ' 親タスクの進捗も再計算（Service）
 End Sub
 
-Sub RefreshWBSView()
-    ' Repository.FindAll → WBS_Viewに書き出し
+Public Sub RefreshWBSView()
+    On Error GoTo ErrorHandler
+    Const PROCEDURE_NAME As String = "RefreshWBSView"
+
+    Dim colTasks As Collection
+    Set colTasks = m_objTaskRepository.FindAll()
+
+    Dim colResources As Collection
+    Set colResources = m_objResourceRepository.FindAll()
+
+    Dim colViewItems As Collection
+    Set colViewItems = m_objWbsPresenter.BuildWbsViewItems(colTasks, colResources)
+
+    Call m_objWbsView.Clear
+    Call m_objWbsView.Render(colViewItems)
+
+    Exit Sub
+
+ErrorHandler:
+    MsgBox "Error: " & Err.Description, vbCritical, PROCEDURE_NAME
 End Sub
 
