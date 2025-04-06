@@ -85,3 +85,64 @@ Public Sub HandleWbsCodeChanged(p_NewWbsCode As String, p_TaskId As String)
 ErrorHandler:
     MsgBox "Error on updating WBS Code: " & Err.Description, vbCritical
 End Sub
+
+Public Sub UpdateTask(p_Data As Variant, p_TaskId As String, p_DataColumun As Long)
+    On Error GoTo ErrorHandler
+    
+    Const COL_WBS_CODE As Long = 1
+    Const COL_TASK_NAME As Long = 2
+    Const COL_PROGRESS As Long = 5
+    Const COL_BASELINE_START_DATE As Long = 7
+    Const COL_BASELINE_END_DATE As Long = 8
+    Const COL_BASELINE_WORK_HOURS As Long = 9
+    Const COL_ASSIGNED_WORK_HOURS As Long = 10
+    Const COL_ACTUAL_WORK_HOURS As Long = 11
+    Const COL_ACTUAL_START_DATE As Long = 13
+    Const COL_ACTUAL_END_DATE As Long = 14
+    Const COL_PREDECESSOR_WBS_Code As Long = 15
+        
+    Dim objTask As clsTask
+    Set objTask = m_objTaskRepository.Find(p_TaskId)
+    If objTask Is Nothing Then
+        Err.Raise vbObjectError + 1000, , "Task not found: " & p_TaskId
+    End If
+    
+    Select Case p_DataColumun
+        Case COL_WBS_CODE
+            objTask.WbsCode = p_Data
+        Case COL_TASK_NAME
+            objTask.Name = p_Data
+        Case COL_PROGRESS
+            objTask.Progress = p_Data
+        Case COL_BASELINE_START_DATE
+            objTask.BaselineStartDate = p_Data
+        Case COL_BASELINE_END_DATE
+            objTask.BaselineEndDate = p_Data
+        Case COL_BASELINE_WORK_HOURS
+            objTask.BaselineWorkHours = p_Data
+        Case COL_ASSIGNED_WORK_HOURS
+            objTask.AssignedWorkHours = p_Data
+        Case COL_ACTUAL_WORK_HOURS
+            objTask.ActualWorkHours = p_Data
+        Case COL_ACTUAL_START_DATE
+            objTask.ActualStartDate = p_Data
+        Case COL_ACTUAL_END_DATE
+            objTask.ActualEndDate = p_Data
+'        Case COL_PREDECESSOR_WBS_Code
+'            update objTask.PredecessorId in some way
+        Case Else
+            Err.Raise vbObjectError + 1000, , "Not allowed to change the data on this column."
+    End Select
+
+    ' Depend on col num, adjust where to assign the val
+    
+    ' Validation
+    
+    Call m_objTaskRepository.Save(objTask)
+    
+    Call m_objTaskService.RecalculateAll
+
+    Exit Sub
+ErrorHandler:
+    MsgBox "Error: " & Err.Description, vbCritical
+End Sub
