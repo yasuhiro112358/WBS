@@ -83,12 +83,12 @@ Public Sub RefreshWbsView()
     On Error GoTo ErrorHandler
     Const PROCEDURE_NAME As String = "RefreshWBSView"
 
+    Call m_objTaskService.RecalculateAll
+
     Dim colTasks As Collection
     Set colTasks = m_objTaskRepository.FindAll()
-
     Dim colResources As Collection
     Set colResources = m_objResourceRepository.FindAll()
-
     Dim colViewItems As Collection
     Set colViewItems = m_objWbsPresenter.BuildWbsViewItems(colTasks, colResources)
 
@@ -96,7 +96,6 @@ Public Sub RefreshWbsView()
     Call m_objWbsView.Render(colViewItems)
 
     Exit Sub
-
 ErrorHandler:
     MsgBox "Error: " & Err.Description, vbCritical, PROCEDURE_NAME
 End Sub
