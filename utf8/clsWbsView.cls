@@ -108,7 +108,8 @@ Public Sub Render(p_colWbsViewItems As Collection)
         If .Parent.Windows(1).FreezePanes Then
             .Parent.Windows(1).FreezePanes = False
         End If
-        .Range("C5").Select
+'        .Range("C5").Select
+        .Rows(5).Select
         .Parent.Windows(1).FreezePanes = True
     End With
     
