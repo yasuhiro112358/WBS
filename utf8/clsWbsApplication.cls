@@ -75,8 +75,10 @@ Public Sub HandleWbsCodeChanged(p_NewWbsCode As String, p_TaskId As String)
     If objTask Is Nothing Then Exit Sub
 
     objTask.WbsCode = p_NewWbsCode
+    
     Call m_objTaskRepository.Save(objTask)
-    Call m_objTaskService.RecalculateParentRelations
+'    Call m_objTaskService.RecalculateParentRelations
+    Call m_objTaskService.RecalculateAll
     Call Me.RefreshWbsView
 
     Exit Sub
