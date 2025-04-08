@@ -1,4 +1,4 @@
-$wbPath = "Z:\github.com\yasuhiro112358\WBS\template.xlsm"
+$wbPath = "Z:\github.com\yasuhiro112358\WBS\VBAProject.xlsm"
 $srcPath = "Z:\github.com\yasuhiro112358\WBS\utf8"
 
 function Log {
@@ -60,6 +60,21 @@ foreach ($file in $files) {
 
         if ($moduleName -like "sht*") {
             Log "Skipping sheet module: $moduleName"
+            continue
+        }
+
+        if ($moduleName -like "Sheet*") {
+            Log "Skipping sheet module: $moduleName"
+            continue
+        }
+
+        if ($moduleName -like "wb*") {
+            Log "Skipping workbook module: $moduleName"
+            continue
+        }
+        
+        if ($moduleName -like "ThisWorkbook") {
+            Log "Skipping ThisWorkbook module: $moduleName"
             continue
         }
 
