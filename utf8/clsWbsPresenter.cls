@@ -12,7 +12,8 @@ Option Explicit
 Private Const MODULE_NAME As String = "clsWbsPresenter"
 
 Private Const INDENT_WIDTH As Long = 8
-Private Const LINE_PREFIX As String = "* "
+'Private Const LINE_PREFIX As String = "* "
+Private Const LINE_PREFIX As String = ""
 
 Private m_objTaskService As clsTaskService
 
