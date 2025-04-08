@@ -1,3 +1,6 @@
+$wbPath = "Z:\github.com\yasuhiro112358\WBS\template.xlsm"
+$srcPath = "Z:\github.com\yasuhiro112358\WBS\utf8"
+
 function Log {
     param ([string]$message)
     $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
@@ -7,7 +10,7 @@ function Log {
 function LogError {
     param ([string]$message)
     $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-    Write-Host "[ERROR] $message" -ForegroundColor Red
+    Write-Host "[$timestamp] [ERROR] $message" -ForegroundColor Red
 }
 
 try {
@@ -20,9 +23,6 @@ try {
     LogError "Failed to create Excel COM object: $_"
     exit
 }
-
-$wbPath = "Z:\github.com\yasuhiro112358\WBS\template.xlsm"
-$srcPath = "Z:\github.com\yasuhiro112358\WBS\utf8"
 
 try {
     Log "Opening Excel file...: $wbPath"
@@ -53,22 +53,15 @@ foreach ($file in $files) {
     $tempPath = "$env:TEMP\$($file.Name)"
     # [Fix] Only for .frm files
     $frxPath = [System.IO.Path]::ChangeExtension($file.FullName, ".frx") 
-    $tempFrxPath = "$env:TEMP\$($moduleName).frx" #
+    $tempFrxPath = "$env:TEMP\$($moduleName).frx"
 
     try {
         Log "Handling module: $moduleName"
 
-        # if ($moduleName -like "sht*") {
-        #     try {
-        #         $sheet = $wb.Sheets.Item($moduleName)
-        #         Log "Sheet already exists: $moduleName"
-        #     } catch {
-        #         Log "Creating new sheet: $moduleName"
-        #         $sheet = $wb.Sheets.Add()
-        #         $sheet.Name = $moduleName
-        #         $sheet.CodeName = $moduleName
-        #     }
-        # }
+        if ($moduleName -like "sht*") {
+            Log "Skipping sheet module: $moduleName"
+            continue
+        }
 
         try {
             $comp = $vbProj.VBComponents.Item($moduleName)
