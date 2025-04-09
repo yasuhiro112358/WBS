@@ -59,8 +59,11 @@ Public Sub Render(p_colWbsViewItems As Collection)
     For Each objWbsViewItem In p_colWbsViewItems
         With m_objWorksheet
 '             .Cells(i, 1).Value = i - DATA_START_ROW + 1
+
+'            .Cells(i, 1).NumberFormat = "@"
             .Cells(i, 1).Value = objWbsViewItem.WbsCode
 '            .Cells(i, 1).Formula = "=""" & objWbsViewItem.WbsCode & """"
+
             .Cells(i, 2).Value = objWbsViewItem.DisplayName
             .Cells(i, 3).Value = FormatDate(objWbsViewItem.StartDate)
             .Cells(i, 4).Value = FormatDate(objWbsViewItem.EndDate)
@@ -96,21 +99,21 @@ Public Sub Render(p_colWbsViewItems As Collection)
     End With
         
     With m_objWorksheet
-        .Range(.Cells(DATA_START_ROW, 3), .Cells(DataEndRow, 3)).NumberFormat = "mm/dd"
-        .Range(.Cells(DATA_START_ROW, 4), .Cells(DataEndRow, 4)).NumberFormat = "mm/dd"
-        .Range(.Cells(DATA_START_ROW, 7), .Cells(DataEndRow, 7)).NumberFormat = "mm/dd"
-        .Range(.Cells(DATA_START_ROW, 8), .Cells(DataEndRow, 8)).NumberFormat = "mm/dd"
-        .Range(.Cells(DATA_START_ROW, 13), .Cells(DataEndRow, 13)).NumberFormat = "mm/dd"
-        .Range(.Cells(DATA_START_ROW, 14), .Cells(DataEndRow, 14)).NumberFormat = "mm/dd"
+        .Range(.Cells(DATA_START_ROW, 3), .Cells(DataEndRow, 3)).NumberFormat = "yy/mm/dd"
+        .Range(.Cells(DATA_START_ROW, 4), .Cells(DataEndRow, 4)).NumberFormat = "yy/mm/dd"
+        .Range(.Cells(DATA_START_ROW, 7), .Cells(DataEndRow, 7)).NumberFormat = "yy/mm/dd"
+        .Range(.Cells(DATA_START_ROW, 8), .Cells(DataEndRow, 8)).NumberFormat = "yy/mm/dd"
+        .Range(.Cells(DATA_START_ROW, 13), .Cells(DataEndRow, 13)).NumberFormat = "yy/mm/dd"
+        .Range(.Cells(DATA_START_ROW, 14), .Cells(DataEndRow, 14)).NumberFormat = "yy/mm/dd"
     
         .Columns("A:T").AutoFit
         
-        If .Parent.Windows(1).FreezePanes Then
-            .Parent.Windows(1).FreezePanes = False
-        End If
-'        .Range("C5").Select
-        .Rows(5).Select
-        .Parent.Windows(1).FreezePanes = True
+'         If .Parent.Windows(1).FreezePanes Then
+'             .Parent.Windows(1).FreezePanes = False
+'         End If
+' '        .Range("C5").Select
+'         .Rows(5).Select
+'         .Parent.Windows(1).FreezePanes = True
     End With
     
     Exit Sub

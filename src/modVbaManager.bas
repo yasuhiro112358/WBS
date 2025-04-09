@@ -1,12 +1,12 @@
-Attribute VB_Name = "modVBAProjectManager"
+Attribute VB_Name = "modVbaManager"
 Option Explicit
 
-Sub ExportVBAModules()
-    Dim Sep As String
-    Sep = Application.PathSeparator
+Sub ExportVbaModules()
+    Dim PS As String
+    PS = Application.PathSeparator
     
     Dim ExportDir As String
-    ExportDir = ThisWorkbook.Path & Sep & "exported"
+    ExportDir = ThisWorkbook.Path & PS & "exported"
     
     Dim UserConfirmed As Boolean
     UserConfirmed = ConfirmExport(ExportDir)
@@ -20,10 +20,10 @@ Sub ExportVBAModules()
     
     Dim objComponent As Object
     For Each objComponent In ThisWorkbook.VBProject.VBComponents
-        ExportModule objComponent, ExportDir & Sep 'Need separator
+        ExportModule objComponent, ExportDir & PS
     Next objComponent
     
-    MsgBox "VBA code has been exported!", vbInformation
+    MsgBox "VBA code has been exported.", vbInformation
     Call LogMessage("VBA code has been exported.")
 End Sub
 

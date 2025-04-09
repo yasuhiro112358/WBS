@@ -46,7 +46,7 @@ Sub CreateNewTask()
 '        .AssignedWorkHours = 0
         .Progress = 0
 '        .ParentId = ""
-        .ResourceId = "R003"
+'        .ResourceId = "R003"
     End With
 
     Call m_objTaskRepository.Save(objTask)
@@ -87,8 +87,10 @@ Public Sub RefreshWbsView()
 
     Dim colTasks As Collection
     Set colTasks = m_objTaskRepository.FindAll()
+    
     Dim colResources As Collection
     Set colResources = m_objResourceRepository.FindAll()
+    
     Dim colViewItems As Collection
     Set colViewItems = m_objWbsPresenter.BuildWbsViewItems(colTasks, colResources)
 

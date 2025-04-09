@@ -12,7 +12,8 @@ Option Explicit
 Private Const MODULE_NAME As String = "clsWbsPresenter"
 
 Private Const INDENT_WIDTH As Long = 8
-Private Const LINE_PREFIX As String = "* "
+'Private Const LINE_PREFIX As String = "* "
+Private Const LINE_PREFIX As String = ""
 
 Private m_objTaskService As clsTaskService
 
@@ -125,10 +126,10 @@ Public Function BuildWbsViewItems(p_colTasks As Collection, p_colResources As Co
     Next objTask
 
 '    Set BuildWbsViewItems = colWbsViewItems
-    Set BuildWbsViewItems = SortCollectionByProperty(colWbsViewItems, "WbsCode")
+'    Set BuildWbsViewItems = SortCollectionByProperty(colWbsViewItems, "WbsCode")
+    Set BuildWbsViewItems = SortWbsViewItemsByWbsCode(colWbsViewItems)
     
     Exit Function
-
 ErrorHandler:
     Err.Raise Err.Number, MODULE_NAME & "." & PROCEDURE_NAME, Err.Description
 End Function
@@ -159,4 +160,129 @@ Private Function FindResourceById(p_colResources As Collection, p_Id As String) 
     Next
     
     Set FindResourceById = Nothing
+End Function
+
+'
+' Return an array made from splitted WBS code.
+' Type: Array(Value as Long) as Variant
+'
+Private Function ParseWbsCode(p_Code As String) As Variant
+    On Error GoTo ErrorHandler
+    Const PROCEDURE_NAME As String = "ParseWbsCode"
+
+    Dim CleanCode As String
+    If UCase(Left(p_Code, 4)) = "WBS-" Then
+        CleanCode = Mid(p_Code, 5)
+    Else
+        Err.Raise Err.Number + 1000, , "WBS code on wrong format found."
+    End If
+
+    Dim arrParts As Variant
+    arrParts = Split(CleanCode, ".")
+    
+    Dim i As Long
+    For i = LBound(arrParts) To UBound(arrParts)
+        If IsNumeric(arrParts(i)) Then
+            arrParts(i) = CLng(arrParts(i))
+        Else
+            arrParts(i) = 0
+        End If
+    Next i
+    
+    ParseWbsCode = arrParts
+    
+    Exit Function
+ErrorHandler:
+    Err.Raise Err.Number, MODULE_NAME & "." & PROCEDURE_NAME, Err.Description
+End Function
+
+'
+' Retern -1 if p_Code1 is less than p_Code2
+' Retern  0 if p_Code1 is equal to p_Code2
+' Retern  1 if p_Code1 is greater than p_Code2
+'
+Private Function CompareWbsCodes(p_Code1 As String, p_Code2 As String) As Integer
+    On Error GoTo ErrorHandler
+    Const PROCEDURE_NAME As String = "CompareWbsCodes"
+        
+    Dim arr1 As Variant
+    arr1 = ParseWbsCode(p_Code1)
+    Dim arr2 As Variant
+    arr2 = ParseWbsCode(p_Code2)
+    
+    Dim Len1 As Long
+    Len1 = UBound(arr1)
+    Dim Len2 As Long
+    Len2 = UBound(arr2)
+    
+    Dim MaxLen As Long
+    MaxLen = Application.WorksheetFunction.Max(Len1, Len2)
+    
+    Dim i As Long
+    For i = 0 To MaxLen
+        Dim val1 As Long
+        If i <= Len1 Then
+            val1 = arr1(i)
+        Else
+            val1 = 0
+        End If
+        
+        Dim val2 As Long
+        If i <= Len2 Then
+            val2 = arr2(i)
+        Else
+            val2 = 0
+        End If
+        
+        If val1 < val2 Then
+            CompareWbsCodes = -1
+            Exit Function
+        ElseIf val1 > val2 Then
+            CompareWbsCodes = 1
+            Exit Function
+        End If
+    Next
+    
+    CompareWbsCodes = 0
+    
+    Exit Function
+ErrorHandler:
+    Err.Raise Err.Number, MODULE_NAME & "." & PROCEDURE_NAME, Err.Description
+End Function
+
+Private Function SortWbsViewItemsByWbsCode(p_colWbsViewItems As Collection) As Collection
+    On Error GoTo ErrorHandler
+    Const PROCEDURE_NAME As String = "SortWbsViewItemsByWbsCode"
+    
+    Dim arr() As clsWbsViewItem
+    ReDim arr(1 To p_colWbsViewItems.Count)
+    
+    Dim i As Long
+    For i = 1 To p_colWbsViewItems.Count
+        Set arr(i) = p_colWbsViewItems(i)
+    Next
+    
+    For i = 1 To UBound(arr) - 1
+        Dim j As Long
+        For j = i + 1 To UBound(arr)
+            If CompareWbsCodes(arr(i).WbsCode, arr(j).WbsCode) > 0 Then
+                Dim tmp As clsWbsViewItem
+                Set tmp = arr(i)
+                Set arr(i) = arr(j)
+                Set arr(j) = tmp
+            End If
+        Next j
+    Next i
+
+    Dim colSorted As Collection
+    Set colSorted = New Collection
+    For i = 1 To UBound(arr)
+        colSorted.Add arr(i)
+    Next i
+    
+    Set SortWbsViewItemsByWbsCode = colSorted
+    
+    Exit Function
+ErrorHandler:
+    Err.Raise Err.Number, MODULE_NAME & "." & PROCEDURE_NAME, Err.Description
 End Function
