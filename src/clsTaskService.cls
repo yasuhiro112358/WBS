@@ -32,6 +32,8 @@ Public Function GenerateInitialWbsCode() As String
     On Error GoTo ErrorHandler
     Const PROCEDURE_NAME As String = "GenerateInitialWbsCode"
 
+    Const PREFIX As String = "WBS-"
+
     Dim colTasks As Collection
     Set colTasks = m_objTaskRepository.FindAll()
 
@@ -42,10 +44,20 @@ Public Function GenerateInitialWbsCode() As String
     For Each objTask In colTasks
         Dim Code As String
         Code = Trim(objTask.WbsCode)
+        Code = Mid(Code, Len(PREFIX) + 1)
         
-        If Code = "" Then GoTo Continue
-        If InStr(Code, ".") <> 0 Then GoTo Continue
-        If IsNumeric(Code) = False Then GoTo Continue
+        If Code = "" Then
+            GoTo Continue
+        End If
+        
+        If InStr(Code, ".") <> 0 Then
+            GoTo Continue
+        End If
+        
+        If IsNumeric(Code) = False Then
+            GoTo Continue
+        End If
+        
         If CLng(Code) > MaxCode Then
             MaxCode = CLng(Code)
         End If
@@ -53,9 +65,9 @@ Public Function GenerateInitialWbsCode() As String
 Continue:
     Next objTask
 
-    GenerateInitialWbsCode = CStr(MaxCode + 1)
+    GenerateInitialWbsCode = CStr(PREFIX & (MaxCode + 1))
+    
     Exit Function
-
 ErrorHandler:
     Err.Raise Err.Number, MODULE_NAME & "." & PROCEDURE_NAME, Err.Description
 End Function
