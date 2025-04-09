@@ -133,9 +133,8 @@ Public Sub UpdateTask(p_Data As Variant, p_TaskId As String, p_DataColumun As Lo
         Case Else
             Err.Raise vbObjectError + 1000, , "Not allowed to change the data on this column."
     End Select
-
     
-    ' Validation
+    ' Want to add validation here
     
     Call m_objTaskRepository.Save(objTask)
     
