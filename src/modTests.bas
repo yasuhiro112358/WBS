@@ -116,3 +116,29 @@ Sub TestGlobals()
     Debug.Print APP_NAME
 End Sub
 
+Sub Test_ParseWbsCode()
+    
+    Dim objWbsPresenter As clsWbsPresenter
+    Set objWbsPresenter = New clsWbsPresenter
+
+    Dim arrResult As Variant
+    
+    arrResult = objWbsPresenter.ParseWbsCode("1.10.3")
+
+    Debug.Print "Input: 1.10.3"
+    Debug.Print "Parsed:"
+    Dim i As Long
+    For i = LBound(arrResult) To UBound(arrResult)
+        Debug.Print "  Part(" & i & "): " & arrResult(i)
+    Next i
+    
+    Debug.Print "----"
+    
+    arrResult = objWbsPresenter.ParseWbsCode("2.5.xyz")
+    
+    Debug.Print "Input: 2.5.xyz"
+    Debug.Print "Parsed:"
+    For i = LBound(arrResult) To UBound(arrResult)
+        Debug.Print "  Part(" & i & "): " & arrResult(i)
+    Next i
+End Sub
