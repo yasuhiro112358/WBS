@@ -345,4 +345,26 @@ Private Function GetParentWbsCode(p_WbsCode As String) As String
     End If
 End Function
 
+Public Function FindIdByWbsCode(p_WbsCode As String) As String
+    On Error GoTo ErrorHandler
+    Const PROCEDURE_NAME As String = "FindIdByWbsCode"
 
+    Dim colTasks As Collection
+    Set colTasks = m_objTaskRepository.FindAll()
+        
+    Dim objTask As clsTask
+    For Each objTask In colTasks
+        If Trim(objTask.WbsCode) = Trim(p_WbsCode) Then
+            FindIdByWbsCode = objTask.Id
+            Exit Function
+        End If
+    Next
+    
+    FindIdByWbsCode = ""
+    
+'    Err.Raise vbObjectError + 1000, MODULE_NAME & "." & PROCEDURE_NAME, "Task with the WBS code not found."
+    
+    Exit Function
+ErrorHandler:
+    Err.Raise Err.Number, MODULE_NAME & "." & PROCEDURE_NAME, Err.Description
+End Function
