@@ -32,6 +32,8 @@ Public Function GenerateInitialWbsCode() As String
     On Error GoTo ErrorHandler
     Const PROCEDURE_NAME As String = "GenerateInitialWbsCode"
 
+    Const PREFIX As String = "WBS-"
+
     Dim colTasks As Collection
     Set colTasks = m_objTaskRepository.FindAll()
 
@@ -42,18 +44,20 @@ Public Function GenerateInitialWbsCode() As String
     For Each objTask In colTasks
         Dim Code As String
         Code = Trim(objTask.WbsCode)
-
-'        If Code <> "" And InStr(Code, ".") = 0 Then
-'            If IsNumeric(Code) Then
-'                If CLng(Code) > MaxCode Then
-'                    MaxCode = CLng(Code)
-'                End If
-'            End If
-'        End If
+        Code = Mid(Code, Len(PREFIX) + 1)
         
-        If Code = "" Then GoTo Continue
-        If InStr(Code, ".") <> 0 Then GoTo Continue
-        If IsNumeric(Code) = False Then GoTo Continue
+        If Code = "" Then
+            GoTo Continue
+        End If
+        
+        If InStr(Code, ".") <> 0 Then
+            GoTo Continue
+        End If
+        
+        If IsNumeric(Code) = False Then
+            GoTo Continue
+        End If
+        
         If CLng(Code) > MaxCode Then
             MaxCode = CLng(Code)
         End If
@@ -61,7 +65,101 @@ Public Function GenerateInitialWbsCode() As String
 Continue:
     Next objTask
 
-    GenerateInitialWbsCode = CStr(MaxCode + 1)
+    GenerateInitialWbsCode = CStr(PREFIX & (MaxCode + 1))
+    
+    Exit Function
+ErrorHandler:
+    Err.Raise Err.Number, MODULE_NAME & "." & PROCEDURE_NAME, Err.Description
+End Function
+
+'
+' Return actual if it exists, otherwise, return baseline
+'
+Public Function CalcStartDate(p_Task As clsTask) As Date
+    On Error GoTo ErrorHandler
+    Const PROCEDURE_NAME As String = "CalcStartDate"
+
+    If p_Task.ActualStartDate <> 0 Then
+        CalcStartDate = p_Task.ActualStartDate
+    ElseIf p_Task.BaselineStartDate <> 0 Then
+        CalcStartDate = p_Task.BaselineStartDate
+    Else
+        CalcStartDate = 0
+    End If
+    
+    Exit Function
+ErrorHandler:
+    Err.Raise Err.Number, MODULE_NAME & "." & PROCEDURE_NAME, Err.Description
+End Function
+
+Public Function CalcEndDate(p_Task As clsTask) As Date
+    On Error GoTo ErrorHandler
+    Const PROCEDURE_NAME As String = "CalcEndDate"
+
+    If p_Task.ActualEndDate <> 0 Then
+        CalcEndDate = p_Task.ActualEndDate
+    ElseIf p_Task.BaselineEndDate <> 0 Then
+        CalcEndDate = p_Task.BaselineEndDate
+    Else
+        CalcEndDate = 0
+    End If
+    
+    Exit Function
+ErrorHandler:
+    Err.Raise Err.Number, MODULE_NAME & "." & PROCEDURE_NAME, Err.Description
+End Function
+
+'
+' If Progress exists remain it, if not calculate it
+'
+Public Function CalcProgress(p_Task As clsTask) As Double
+    On Error GoTo ErrorHandler
+    Const PROCEDURE_NAME As String = "CalcProgress"
+
+    If p_Task.Progress > 0 Then
+        CalcProgress = p_Task.Progress
+        Exit Function
+    End If
+
+    If p_Task.AssignedWorkHours > 0 Then
+        CalcProgress = (p_Task.ActualWorkHours / p_Task.AssignedWorkHours) * 100
+        If CalcProgress > 100 Then CalcProgress = 100
+    Else
+        CalcProgress = 0
+    End If
+    
+    Exit Function
+ErrorHandler:
+    Err.Raise Err.Number, MODULE_NAME & "." & PROCEDURE_NAME, Err.Description
+End Function
+
+'
+' Calculate difference between actual times, if it does not exists, calculate between baseline times
+'
+Public Function CalcDuration(p_Task As clsTask) As Double
+    On Error GoTo ErrorHandler
+    Const PROCEDURE_NAME As String = "CalcDuration"
+
+    Dim StartDate As Date
+    Dim EndDate As Date
+
+    If p_Task.ActualStartDate <> 0 And p_Task.ActualEndDate <> 0 Then
+        StartDate = p_Task.ActualStartDate
+        EndDate = p_Task.ActualEndDate
+    ElseIf p_Task.BaselineStartDate <> 0 And p_Task.BaselineEndDate <> 0 Then
+        StartDate = p_Task.BaselineStartDate
+        EndDate = p_Task.BaselineEndDate
+    Else
+        CalcDuration = 0
+        Exit Function
+    End If
+
+    If EndDate < StartDate Then
+        CalcDuration = 0
+    Else
+        CalcDuration = EndDate - StartDate + 1
+    End If
+
     Exit Function
 
 ErrorHandler:
@@ -84,6 +182,24 @@ Public Function CalcRemainingWorkHours(p_objTask As clsTask) As Double
 ErrorHandler:
     Err.Raise Err.Number, MODULE_NAME & "." & PROCEDURE_NAME, Err.Description
 End Function
+
+Public Sub RecalculateAll()
+    Dim colTasks As Collection
+    Set colTasks = m_objTaskRepository.FindAll()
+
+    Dim objTask As clsTask
+    For Each objTask In colTasks
+        objTask.StartDate = CalcStartDate(objTask)
+        objTask.EndDate = CalcEndDate(objTask)
+        objTask.Duration = CalcDuration(objTask)
+        objTask.Progress = CalcProgress(objTask)
+'        objTask.RemainingWorkHours = CalcRemainingWorkHours(objTask)
+        
+        Call m_objTaskRepository.Save(objTask)
+    Next
+    
+    Call Me.RecalculateParentRelations
+End Sub
 
 Public Function GetLevel(p_objTask As clsTask) As Long
     On Error GoTo ErrorHandler
@@ -229,4 +345,26 @@ Private Function GetParentWbsCode(p_WbsCode As String) As String
     End If
 End Function
 
+Public Function FindIdByWbsCode(p_WbsCode As String) As String
+    On Error GoTo ErrorHandler
+    Const PROCEDURE_NAME As String = "FindIdByWbsCode"
 
+    Dim colTasks As Collection
+    Set colTasks = m_objTaskRepository.FindAll()
+        
+    Dim objTask As clsTask
+    For Each objTask In colTasks
+        If Trim(objTask.WbsCode) = Trim(p_WbsCode) Then
+            FindIdByWbsCode = objTask.Id
+            Exit Function
+        End If
+    Next
+    
+    FindIdByWbsCode = ""
+    
+'    Err.Raise vbObjectError + 1000, MODULE_NAME & "." & PROCEDURE_NAME, "Task with the WBS code not found."
+    
+    Exit Function
+ErrorHandler:
+    Err.Raise Err.Number, MODULE_NAME & "." & PROCEDURE_NAME, Err.Description
+End Function

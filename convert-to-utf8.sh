@@ -1,6 +1,6 @@
 #!/bin/bash
 SOURCE_DIR="./exported"
-TARGET_DIR="./utf8"
+TARGET_DIR="./src"
 
 echo "[INFO] Converting files to UTF-8..."
 echo "[INFO] Source directory: $SOURCE_DIR"
@@ -11,7 +11,10 @@ for file in "$SOURCE_DIR"/*; do
     filename=$(basename "$file")
     
     if [[ "$filename" == *.frx ]]; then
-        echo "[INFO] $filename is a binary file (.frx) - skipped"
+        # echo "[INFO] $filename is a binary file (.frx) - skipped"
+        
+        cp "$file" "$TARGET_DIR/$filename"
+        echo "[INFO] $filename is a binary file (.frx), copied without converted to UTF-8."
         continue
     fi
 

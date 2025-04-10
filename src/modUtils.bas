@@ -72,29 +72,3 @@ Sub GetColumnIndexes()
     Next Key
 End Sub
 
-'
-' return colDict: {key: colName, value: colNum}
-'
-Function GetColDict() As clsCustomDictionary
-    Dim sht As Worksheet
-    Set sht = shtWBS
-
-    Dim colDict As clsCustomDictionary
-    Set colDict = CustomDictionary()
-    
-    Dim lastCol As Integer
-    lastCol = sht.Cells(1, sht.Columns.Count).End(xlToLeft).Column
-    
-    Dim i As Integer
-    For i = 1 To lastCol
-        Dim colName As String
-        colName = sht.Cells(1, i).Value
-        If colName <> "" Then
-            colDict.Add colName, i
-        End If
-    Next i
-
-    Set GetColDict = colDict
-End Function
-
-

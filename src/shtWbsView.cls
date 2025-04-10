@@ -14,29 +14,29 @@ Private Sub Worksheet_Change(ByVal p_objTarget As Range)
     Application.EnableEvents = False
 
     Const DATA_START_ROW As Long = 5
-    Const COL_WBS_CODE As Long = 1
     Const COL_TASK_ID As Long = 18
 
-    If p_objTarget.Cells.Count > 1 Then GoTo Cleanup
-    If p_objTarget.Row < DATA_START_ROW Then GoTo Cleanup
+    If p_objTarget.Cells.Count > 1 Then
+        GoTo Cleanup
+    End If
+    
+    If p_objTarget.Row < DATA_START_ROW Then
+        GoTo Cleanup
+    End If
     
     Dim TaskId As String
     TaskId = Me.Cells(p_objTarget.Row, COL_TASK_ID).Value
-    If TaskId = "" Then GoTo Cleanup
+    If TaskId = "" Then
+        Err.Raise Err.Number, , "Task ID not found: " & Err.Description
+    End If
 
     Dim objWbsApplication As clsWbsApplication
     Set objWbsApplication = New clsWbsApplication
     Call objWbsApplication.Init
-  
-    Select Case p_objTarget.Column
-        Case COL_WBS_CODE
-            Call objWbsApplication.HandleWbsCodeChanged(CStr(p_objTarget.Value), CStr(TaskId))
-        
-        ' 将来的に追加可能：
-        ' Case 2: Call HandleNameChanged(...)
-        ' Case 3: Call HandleStartDateChanged(...)
-        ' Case 15: Call HandlePredecessorWbsCodeChanged(...)
-    End Select
+    
+    Call objWbsApplication.UpdateTask(p_objTarget.Value, TaskId, p_objTarget.Column)
+    
+    Call objWbsApplication.RefreshWbsView
     
 Cleanup:
     Application.EnableEvents = True

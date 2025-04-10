@@ -94,10 +94,10 @@ Public Sub Save(p_Task As clsTask)
     Dim LastRow As Long
     LastRow = m_objWorksheet.Cells(m_objWorksheet.Rows.Count, 1).End(xlUp).Row
 
-    Dim i As Long
     Dim FoundRow As Long
     FoundRow = 0
 
+    Dim i As Long
     For i = 2 To LastRow
         If CStr(m_objWorksheet.Cells(i, 1).Value) = p_Task.Id Then
             FoundRow = i
@@ -114,7 +114,11 @@ Public Sub Save(p_Task As clsTask)
 
     With m_objWorksheet
         .Cells(TargetRow, 1).Value = p_Task.Id
+        
+'        .Cells(TargetRow, 2).NumberFormat = "@"
+'        .Cells(TargetRow, 2).Value = CStr(p_Task.WbsCode)
         .Cells(TargetRow, 2).Value = p_Task.WbsCode
+        
         .Cells(TargetRow, 3).Value = p_Task.Name
         .Cells(TargetRow, 4).Value = p_Task.StartDate
         .Cells(TargetRow, 5).Value = p_Task.EndDate
