@@ -109,9 +109,9 @@ Public Sub UpdateTask(p_Data As Variant, p_TaskId As String, p_DataColumun As Lo
     
     Select Case p_DataColumun
         Case COL_WBS_CODE
-            objTask.WbsCode = p_Data
+            objTask.WbsCode = Trim(CStr(p_Data))
         Case COL_TASK_NAME
-            objTask.Name = p_Data
+            objTask.Name = Trim(CStr(p_Data))
         Case COL_PROGRESS
             objTask.Progress = p_Data
         Case COL_BASELINE_START_DATE
@@ -128,8 +128,8 @@ Public Sub UpdateTask(p_Data As Variant, p_TaskId As String, p_DataColumun As Lo
             objTask.ActualStartDate = p_Data
         Case COL_ACTUAL_END_DATE
             objTask.ActualEndDate = p_Data
-'        Case COL_PREDECESSOR_WBS_Code
-'            update objTask.PredecessorId in some way
+        Case COL_PREDECESSOR_WBS_Code
+            objTask.PredecessorId = m_objTaskService.FindIdByWbsCode(Trim(CStr(p_Data)))
         Case Else
             Err.Raise vbObjectError + 1000, , "Not allowed to change the data on this column."
     End Select
