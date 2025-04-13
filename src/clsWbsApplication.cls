@@ -77,7 +77,6 @@ Public Sub HandleWbsCodeChanged(p_NewWbsCode As String, p_TaskId As String)
     objTask.WbsCode = p_NewWbsCode
     
     Call m_objTaskRepository.Save(objTask)
-'    Call m_objTaskService.RecalculateParentRelations
     Call m_objTaskService.RecalculateAll
     Call Me.RefreshWbsView
 
@@ -86,7 +85,7 @@ ErrorHandler:
     MsgBox "Error on updating WBS Code: " & Err.Description, vbCritical
 End Sub
 
-Public Sub UpdateTask(p_Data As Variant, p_TaskId As String, p_DataColumun As Long)
+Public Sub UpdateTask(ByVal p_objTarget As Range)
     On Error GoTo ErrorHandler
     
     Const COL_WBS_CODE As Long = 1
@@ -100,36 +99,52 @@ Public Sub UpdateTask(p_Data As Variant, p_TaskId As String, p_DataColumun As Lo
     Const COL_ACTUAL_START_DATE As Long = 13
     Const COL_ACTUAL_END_DATE As Long = 14
     Const COL_PREDECESSOR_WBS_Code As Long = 15
-        
-    Dim objTask As clsTask
-    Set objTask = m_objTaskRepository.Find(p_TaskId)
-    If objTask Is Nothing Then
-        Err.Raise vbObjectError + 1000, , "Task not found: " & p_TaskId
+    Const COL_TASK_ID As Long = 18
+    Const DATA_START_ROW As Long = 5
+   
+    If p_objTarget.Cells.Count > 1 Then
+        Err.Raise vbObjectError + 1000, , "Changing multiple cells is not allowed."
     End If
     
-    Select Case p_DataColumun
+    If p_objTarget.Row < DATA_START_ROW Then
+        Exit Sub
+    End If
+    
+    Dim TaskId As String
+    TaskId = shtWbsView.Cells(p_objTarget.Row, COL_TASK_ID).Value
+    If TaskId = "" Then
+        Err.Raise vbObjectError + 1000, , "Task ID not found: " & Err.Description
+    End If
+
+    Dim objTask As clsTask
+    Set objTask = m_objTaskRepository.Find(TaskId)
+    If objTask Is Nothing Then
+        Err.Raise vbObjectError + 1000, , "Task not found: " & TaskId
+    End If
+    
+    Select Case p_objTarget.Column
         Case COL_WBS_CODE
-            objTask.WbsCode = Trim(CStr(p_Data))
+            objTask.WbsCode = Trim(CStr(p_objTarget.Value))
         Case COL_TASK_NAME
-            objTask.Name = Trim(CStr(p_Data))
+            objTask.Name = Trim(CStr(p_objTarget.Value))
         Case COL_PROGRESS
-            objTask.Progress = p_Data
+            objTask.Progress = p_objTarget.Value
         Case COL_BASELINE_START_DATE
-            objTask.BaselineStartDate = p_Data
+            objTask.BaselineStartDate = p_objTarget.Value
         Case COL_BASELINE_END_DATE
-            objTask.BaselineEndDate = p_Data
+            objTask.BaselineEndDate = p_objTarget.Value
         Case COL_BASELINE_WORK_HOURS
-            objTask.BaselineWorkHours = p_Data
+            objTask.BaselineWorkHours = p_objTarget.Value
         Case COL_ASSIGNED_WORK_HOURS
-            objTask.AssignedWorkHours = p_Data
+            objTask.AssignedWorkHours = p_objTarget.Value
         Case COL_ACTUAL_WORK_HOURS
-            objTask.ActualWorkHours = p_Data
+            objTask.ActualWorkHours = p_objTarget.Value
         Case COL_ACTUAL_START_DATE
-            objTask.ActualStartDate = p_Data
+            objTask.ActualStartDate = p_objTarget.Value
         Case COL_ACTUAL_END_DATE
-            objTask.ActualEndDate = p_Data
+            objTask.ActualEndDate = p_objTarget.Value
         Case COL_PREDECESSOR_WBS_Code
-            objTask.PredecessorId = m_objTaskService.FindIdByWbsCode(Trim(CStr(p_Data)))
+            objTask.PredecessorId = m_objTaskService.FindIdByWbsCode(Trim(CStr(p_objTarget.Value)))
         Case Else
             Err.Raise vbObjectError + 1000, , "Not allowed to change the data on this column."
     End Select
