@@ -13,6 +13,7 @@ Private Const MODULE_NAME As String = "clsWbsView"
 
 Private Const HEADER_ROW As Long = 4
 Private Const DATA_START_ROW As Long = 5
+Private Const GANTT_START_COLUMN As Long = 22
 
 ' Siemens Cyan
 Private HEADER_BG_COLOR As Long
@@ -44,6 +45,7 @@ Public Sub Render(p_colWbsViewItems As Collection)
     On Error GoTo ErrorHandler
     Const PROCEDURE_NAME As String = "Render"
 
+    Call ClearBackgroundColors
     Call DrawHeader
     
     With m_objWorksheet.Range(m_objWorksheet.Cells(DATA_START_ROW, 1), m_objWorksheet.Cells(m_objWorksheet.Rows.Count, 1))
@@ -115,11 +117,22 @@ Public Sub Render(p_colWbsViewItems As Collection)
 '         .Rows(5).Select
 '         .Parent.Windows(1).FreezePanes = True
     End With
+    With m_objWorksheet
+        .Columns("R").Hidden = True
+        .Columns("S").Hidden = True
+        .Columns("T").Hidden = True
+    End With
+    
+    Call DrawGanttChartHeader(p_colWbsViewItems)
+    Call DrawGanttChart(p_colWbsViewItems)
     
     Exit Sub
-
 ErrorHandler:
     Err.Raise Err.Number, MODULE_NAME & "." & PROCEDURE_NAME, Err.Description
+End Sub
+
+Private Sub ClearBackgroundColors()
+    m_objWorksheet.Cells.Interior.ColorIndex = xlNone
 End Sub
 
 Private Function FormatDate(p_Date As Date) As Variant
@@ -174,3 +187,84 @@ Private Sub DrawHeader()
     End With
 End Sub
 
+Private Sub DrawGanttChart(p_colWbsViewItems As Collection)
+    On Error GoTo ErrorHandler
+    Const PROCEDURE_NAME As String = "DrawGanttChart"
+
+'    Const DATA_START_ROW As Long = 5
+'    Const GANTT_START_COLUMN As Long = 22
+    
+    Dim i As Long
+    i = DATA_START_ROW
+
+    Dim objItem As clsWbsViewItem
+    For Each objItem In p_colWbsViewItems
+        Dim StartDate As Date
+        StartDate = objItem.StartDate
+        Dim EndDate As Date
+        EndDate = objItem.EndDate
+
+        If StartDate <> 0 And _
+           EndDate <> 0 Then
+            Dim Duration As Long
+            Duration = EndDate - StartDate + 1
+
+            Dim j As Long
+            For j = 0 To Duration - 1
+                Dim TargetDate As Date
+                TargetDate = StartDate + j
+
+                Dim ColOffset As Long
+                ColOffset = TargetDate - DateSerial(Year(StartDate), Month(StartDate), 1)
+                ' ガント描画位置：GANTT_START_COLUMN + ColOffset
+
+                With m_objWorksheet.Cells(i, GANTT_START_COLUMN + ColOffset)
+                    .Interior.Color = RGB(0, 153, 255)
+                    .Value = ""
+                End With
+            Next j
+        End If
+
+        i = i + 1
+    Next
+
+    Exit Sub
+ErrorHandler:
+    MsgBox "Error in " & MODULE_NAME & "." & PROCEDURE_NAME & ": " & Err.Description, vbCritical
+End Sub
+
+Private Sub DrawGanttChartHeader(p_colWbsViewItems As Collection)
+    Dim MinDate As Date
+    MinDate = #12/31/2099#
+    Dim MaxDate As Date
+    MaxDate = #1/1/2000#
+    
+    Dim objItem As clsWbsViewItem
+    For Each objItem In p_colWbsViewItems
+        If objItem.StartDate <> 0 And _
+           objItem.StartDate < MinDate Then
+            MinDate = objItem.StartDate
+        End If
+        If objItem.EndDate <> 0 And _
+           objItem.EndDate > MaxDate Then
+            MaxDate = objItem.EndDate
+        End If
+    Next
+
+    Dim TotalDays As Long
+    TotalDays = MaxDate - MinDate + 1
+
+    Dim j As Long
+    For j = 0 To TotalDays - 1
+        With m_objWorksheet.Cells(HEADER_ROW, GANTT_START_COLUMN + j)
+            .NumberFormat = "dd mmm yyyy"
+            .Value = MinDate + j
+            .HorizontalAlignment = xlCenter
+            .VerticalAlignment = xlBottom
+            .Orientation = 90
+            .Font.Bold = False
+        End With
+    Next
+    
+    m_objWorksheet.Columns(GANTT_START_COLUMN).Resize(, GANTT_START_COLUMN + TotalDays).AutoFit
+End Sub
