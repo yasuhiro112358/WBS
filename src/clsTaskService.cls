@@ -195,13 +195,12 @@ Public Sub RecalculateAll()
         objTask.EndDate = CalcEndDate(objTask)
         objTask.Duration = CalcDuration(objTask)
         objTask.Progress = CalcProgress(objTask)
-'        objTask.RemainingWorkHours = CalcRemainingWorkHours(objTask)
-        Call m_objTaskRepository.Save(objTask)
         
-'        Call Me.AdjustChildrenBaselineDates(objTask)
+        Call m_objTaskRepository.Save(objTask)
     Next
     For Each objTask In colTasks
         Call Me.AdjustChildrenBaselineDates(objTask)
+        Call AdjustBaselineStartDateByPredecessor(objTask)
     Next
 End Sub
 
@@ -420,3 +419,35 @@ ErrorHandler:
     Err.Raise Err.Number, MODULE_NAME & "." & PROCEDURE_NAME, Err.Description
 End Function
 
+Private Sub AdjustBaselineStartDateByPredecessor(p_objTask As clsTask)
+    On Error GoTo ErrorHandler
+    Const PROCEDURE_NAME As String = "AdjustBaselineStartDateByPredecessor"
+
+    Dim PredId As String
+    PredId = Trim(p_objTask.PredecessorId)
+    If PredId = "" Then
+        Exit Sub
+    End If
+
+    Dim objPred As clsTask
+    Set objPred = m_objTaskRepository.Find(PredId)
+    If objPred Is Nothing Then
+        Exit Sub
+    End If
+    
+    Dim PredEnd As Date
+    PredEnd = objPred.BaselineEndDate
+    If PredEnd = 0 Then
+        Exit Sub
+    End If
+    
+    If p_objTask.BaselineStartDate < (PredEnd + 1) Then
+        p_objTask.BaselineStartDate = PredEnd + 1
+        p_objTask.BaselineEndDate = p_objTask.BaselineStartDate + p_objTask.Duration - 1
+        Call m_objTaskRepository.Save(p_objTask)
+    End If
+
+    Exit Sub
+ErrorHandler:
+    Err.Raise Err.Number, MODULE_NAME & "." & PROCEDURE_NAME, Err.Description
+End Sub
