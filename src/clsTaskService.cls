@@ -184,9 +184,11 @@ ErrorHandler:
 End Function
 
 Public Sub RecalculateAll()
+    Call Me.RecalculateParentRelations
+    
     Dim colTasks As Collection
     Set colTasks = m_objTaskRepository.FindAll()
-
+    
     Dim objTask As clsTask
     For Each objTask In colTasks
         objTask.StartDate = CalcStartDate(objTask)
@@ -194,11 +196,13 @@ Public Sub RecalculateAll()
         objTask.Duration = CalcDuration(objTask)
         objTask.Progress = CalcProgress(objTask)
 '        objTask.RemainingWorkHours = CalcRemainingWorkHours(objTask)
-        
         Call m_objTaskRepository.Save(objTask)
+        
+'        Call Me.AdjustChildrenBaselineDates(objTask)
     Next
-    
-    Call Me.RecalculateParentRelations
+    For Each objTask In colTasks
+        Call Me.AdjustChildrenBaselineDates(objTask)
+    Next
 End Sub
 
 Public Function GetLevel(p_objTask As clsTask) As Long
@@ -220,20 +224,6 @@ Public Function GetLevel(p_objTask As clsTask) As Long
     Loop
 
     GetLevel = Level
-    Exit Function
-
-ErrorHandler:
-    Err.Raise Err.Number, MODULE_NAME & "." & PROCEDURE_NAME, Err.Description
-End Function
-
-'
-' 子タスク一覧を取得
-'
-Public Function FindChildren(p_ParentId As String) As Collection
-    On Error GoTo ErrorHandler
-    Const PROCEDURE_NAME As String = "FindChildren"
-
-    ' TODO: 実装
     Exit Function
 
 ErrorHandler:
@@ -323,7 +313,8 @@ Public Sub RecalculateParentRelations()
         Dim ParentWbsCode As String
         ParentWbsCode = GetParentWbsCode(objTask.WbsCode)
 
-        If ParentWbsCode <> "" And dictWbsCodeToTaskId.Exists(ParentWbsCode) Then
+        If ParentWbsCode <> "" And _
+           dictWbsCodeToTaskId.Exists(ParentWbsCode) Then
             objTask.ParentId = dictWbsCodeToTaskId.Item(ParentWbsCode)
         Else
             objTask.ParentId = ""
@@ -368,3 +359,64 @@ Public Function FindIdByWbsCode(p_WbsCode As String) As String
 ErrorHandler:
     Err.Raise Err.Number, MODULE_NAME & "." & PROCEDURE_NAME, Err.Description
 End Function
+
+Public Sub AdjustChildrenBaselineDates(p_objParent As clsTask)
+    On Error GoTo ErrorHandler
+    Const PROCEDURE_NAME As String = "AdjustChildrenBaselineDates"
+
+    Dim colChildren As Collection
+    Set colChildren = Me.FindChildren(p_objParent.Id)
+
+    Dim objChild As clsTask
+    For Each objChild In colChildren
+        Dim Updated As Boolean
+        Updated = False
+
+        If objChild.BaselineStartDate = 0 Or _
+           objChild.BaselineStartDate < p_objParent.BaselineStartDate Then
+            objChild.BaselineStartDate = p_objParent.BaselineStartDate
+            Updated = True
+        End If
+
+        If objChild.BaselineEndDate = 0 Or _
+           objChild.BaselineEndDate > p_objParent.BaselineEndDate Then
+            objChild.BaselineEndDate = p_objParent.BaselineEndDate
+            Updated = True
+        End If
+
+        If Updated Then
+            Call m_objTaskRepository.Save(objChild)
+        End If
+        
+        Call AdjustChildrenBaselineDates(objChild)
+    Next
+
+    Exit Sub
+ErrorHandler:
+    Err.Raise Err.Number, MODULE_NAME & "." & PROCEDURE_NAME, Err.Description
+End Sub
+
+Public Function FindChildren(p_Id As String) As Collection
+    On Error GoTo ErrorHandler
+    Const PROCEDURE_NAME As String = "FindChildren"
+
+    Dim colTasks As Collection
+    Set colTasks = m_objTaskRepository.FindAll()
+
+    Dim colChildren As Collection
+    Set colChildren = New Collection
+
+    Dim objTask As clsTask
+    For Each objTask In colTasks
+        If objTask.ParentId = p_Id Then
+            colChildren.Add objTask
+        End If
+    Next
+
+    Set FindChildren = colChildren
+   
+    Exit Function
+ErrorHandler:
+    Err.Raise Err.Number, MODULE_NAME & "." & PROCEDURE_NAME, Err.Description
+End Function
+
